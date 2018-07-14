@@ -1,9 +1,21 @@
 security:
+    encoders:
+        App\Entity\User:
+            algorithm: bcrypt
+
     providers:
         in_memory: { memory: ~ }
+        db_user_provider:
+            entity:
+                class: App\Entity\User
+                property: username
+
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+
         main:
-            anonymous: ~
+            pattern:    ^/
+            http_basic: ~
+            provider: db_user_provider
