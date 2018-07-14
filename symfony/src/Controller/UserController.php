@@ -1,23 +1,34 @@
 <?php
 namespace App\Controller;
 
-use App\DTO\UserDTO;
+use App\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 
-class UserController
+class UserController extends Controller
 {
     /**
      * @Route(path="/register", name="app.users.register", methods={"POST"})
-     * @ParamConverter("userDTO", converter="fos_rest.request_body")
-     * @param UserDTO $userDTO
+     * @ParamConverter("user", converter="fos_rest.request_body")
+     *
+     * @param User $user
+     * @param ConstraintViolationListInterface $validationErrors
      * @return JsonResponse
      */
-    public function create(UserDTO $userDTO)
+    public function create(User $user, ConstraintViolationListInterface $validationErrors)
     {
-        var_dump($userDTO);
+        if ($validationErrors->count() > 0) {
+            throw new BadRequestHttpException($validationErrors);
+        }
 
-        return new JsonResponse('Hello');
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        return new JsonResponse();
     }
 }

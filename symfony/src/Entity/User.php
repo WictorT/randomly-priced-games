@@ -2,11 +2,15 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Table(name="rpg_users")
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @UniqueEntity("email")
+ * @UniqueEntity("username")
  */
 class User implements UserInterface, \Serializable
 {
@@ -20,24 +24,43 @@ class User implements UserInterface, \Serializable
 
     /**
      * @ORM\Column(type="string", length=25, unique=true)
+     *
+     * @Assert\NotBlank()
+     * @Assert\Type("string")
+     * @Assert\Length(max=25)
+     *
      * @var string
      */
     private $username;
 
     /**
      * @ORM\Column(type="string", length=64)
+     *
+     * @Assert\NotBlank()
+     * @Assert\Type("string")
+     * @Assert\Length(max=64)
+     *
      * @var string
      */
     private $password;
 
     /**
      * @ORM\Column(type="string", length=254, unique=true)
+     *
+     * @Assert\NotBlank()
+     * @Assert\Type("string")
+     * @Assert\Length(max=254)
+     * @Assert\Email()
+     *
      * @var string
      */
     private $email;
 
     /**
      * @ORM\Column(name="is_active", type="boolean")
+     *
+     * @Assert\Type("boolean")
+     *
      * @var boolean
      */
     private $isActive;
