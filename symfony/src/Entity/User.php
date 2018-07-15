@@ -1,6 +1,7 @@
 <?php
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -44,6 +45,13 @@ class User extends BaseEntity implements UserInterface
     private $email;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\CartItem", mappedBy="user")
+     *
+     * @var CartItem[]|ArrayCollection
+     */
+    private $cartItems;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="created_at", type="datetime")
@@ -56,6 +64,19 @@ class User extends BaseEntity implements UserInterface
      * @ORM\Column(name="updated_at", type="datetime", nullable=true)
      */
     private $updatedAt;
+
+    public function __construct()
+    {
+        $this->cartItems = new ArrayCollection();
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
     /**
      * @return string
@@ -73,14 +94,6 @@ class User extends BaseEntity implements UserInterface
     {
         $this->username = $username;
         return $this;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     /**
@@ -125,6 +138,24 @@ class User extends BaseEntity implements UserInterface
     public function getPassword(): string
     {
         return $this->password;
+    }
+
+    /**
+     * @return CartItem[]|ArrayCollection
+     */
+    public function getCartItems(): ArrayCollection
+    {
+        return $this->cartItems;
+    }
+
+    /**
+     * @param CartItem[]|ArrayCollection $cartItems
+     * @return User
+     */
+    public function setCartItems($cartItems)
+    {
+        $this->cartItems = $cartItems;
+        return $this;
     }
 
     /**
