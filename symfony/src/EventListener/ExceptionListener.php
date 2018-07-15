@@ -5,16 +5,15 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
-use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class ExceptionListener
 {
-    /** @var Serializer */
+    /** @var SerializerInterface */
     private $serializer;
 
     /**
-     * @param Serializer $serializer
+     * @param SerializerInterface $serializer
      */
     public function __construct(SerializerInterface $serializer)
     {
@@ -38,13 +37,14 @@ class ExceptionListener
         $response = new JsonResponse($json, 200, [], true);
 
 
-        $response->setContent($message);
+//        $response->setContent($message);
 
         // HttpExceptionInterface is a special type of exception that
         // holds status code and header details
         if ($exception instanceof HttpExceptionInterface) {
             $response->setStatusCode($exception->getStatusCode());
             $response->headers->replace($exception->getHeaders());
+            $response->headers->add(['Content-Type' => 'application/json']);
         } else {
             $response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
         }
