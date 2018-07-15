@@ -36,12 +36,12 @@ class ProductHandler extends BaseHandler
     }
 
     /**
-     * @param BaseDTO|ProductDTO $dto
+     * @param BaseDTO|ProductDTO $productDto
      * @return BaseEntity|Product
      */
-    public function create(BaseDTO $dto): BaseEntity
+    public function create(BaseDTO $productDto): BaseEntity
     {
-        $product = $this->transformer->reverseTransform($dto);
+        $product = $this->transformer->reverseTransform($productDto);
 
         $this->entityManager->persist($product);
         $this->entityManager->flush();
@@ -50,18 +50,28 @@ class ProductHandler extends BaseHandler
     }
 
     /**
-     * @param BaseEntity $entity
-     * @param BaseDTO $dto
+     * @param BaseEntity $product
+     * @param BaseDTO $productDto
      * @return BaseEntity
      */
-    public function update(BaseEntity $entity, BaseDTO $dto): BaseEntity
+    public function update(BaseEntity $product, BaseDTO $productDto): BaseEntity
     {
-        $product = $this->transformer->reverseTransform($dto, $entity);
+        $product = $this->transformer->reverseTransform($productDto, $product);
 
         $this->entityManager->merge($product);
         $this->entityManager->flush();
 
         return $product;
+    }
+
+    /**
+     * @param BaseEntity|Product $product
+     * @return void
+     */
+    public function delete(BaseEntity $product): void
+    {
+        $this->entityManager->remove($product);
+        $this->entityManager->flush();
     }
 
     /**
@@ -71,5 +81,4 @@ class ProductHandler extends BaseHandler
     {
         return $this->entityManager->getRepository(Product::class);
     }
-
 }

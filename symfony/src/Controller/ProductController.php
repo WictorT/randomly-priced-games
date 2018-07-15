@@ -95,6 +95,18 @@ class ProductController extends Controller
 
         $product = $this->productHandler->update($product, $productDTO);
 
-        return $this->json($product, Response::HTTP_CREATED);
+        return $this->json($product, Response::HTTP_OK);
+    }
+
+    /**
+     * @Rest\Delete(path="/products/{id}", name="app.products.delete", requirements={"id":"\d+"})
+     *
+     * @param Product $product
+     * @return JsonResponse
+     */
+    public function deleteAction(Product $product) {
+        $this->productHandler->delete($product);
+
+        return $this->json(null, Response::HTTP_NO_CONTENT);
     }
 }

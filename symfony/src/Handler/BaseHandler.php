@@ -112,6 +112,12 @@ abstract class BaseHandler
     abstract public function update(BaseEntity $entity, BaseDTO $dto): BaseEntity;
 
     /**
+     * @param BaseEntity $entity
+     * @return void
+     */
+    abstract public function delete(BaseEntity $entity): void;
+
+    /**
      * @return BaseRepository
      */
     abstract public function getRepository(): BaseRepository;
