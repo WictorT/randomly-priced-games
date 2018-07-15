@@ -1,11 +1,21 @@
 <?php
 namespace App\Transformer;
 
-use App\DTO\AbstractDTO;
+use App\DTO\BaseDTO;
 use App\Entity\BaseEntity;
 
 interface TransformerInterface
 {
-    public function transform(BaseEntity $entity): AbstractDTO;
-    public function reverseTransform(AbstractDTO $dto): BaseEntity;
+    /**
+     * @param BaseEntity $entity
+     * @return BaseDTO
+     */
+    public function transform(BaseEntity $entity): BaseDTO;
+
+    /**
+     * @param BaseDTO $dto
+     * @param BaseEntity|null $entity
+     * @return BaseEntity
+     */
+    public function reverseTransform(BaseDTO $dto, ?BaseEntity $entity): BaseEntity;
 }

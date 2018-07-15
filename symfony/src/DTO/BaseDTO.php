@@ -1,7 +1,7 @@
 <?php
 namespace App\DTO;
 
-class AbstractDTO
+abstract class BaseDTO
 {
 
 }

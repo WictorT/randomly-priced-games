@@ -1,13 +1,13 @@
 <?php
 namespace App\Handler;
 
-use App\DTO\UserDTO;
+use App\DTO\BaseDTO;
+use App\DTO\ProductDTO;
 use App\Entity\BaseEntity;
 use App\Entity\Product;
-use App\Entity\User;
 use App\Repository\BaseRepository;
 use App\Repository\ProductRepository;
-use App\Transformer\UserTransformer;
+use App\Transformer\ProductTransformer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -16,17 +16,17 @@ class ProductHandler extends BaseHandler
     /** @var EntityManagerInterface */
     private $entityManager;
 
-    /** @var UserTransformer */
+    /** @var ProductTransformer */
     private $transformer;
 
     /**
      * @param EntityManagerInterface $entityManager
-     * @param UserTransformer $transformer
+     * @param ProductTransformer $transformer
      * @param UrlGeneratorInterface $router
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        UserTransformer $transformer,
+        ProductTransformer $transformer,
         UrlGeneratorInterface $router
     ) {
         parent::__construct($router);
@@ -36,24 +36,40 @@ class ProductHandler extends BaseHandler
     }
 
     /**
-     * @param UserDTO $userDTO
-     * @return User
+     * @param BaseDTO|ProductDTO $dto
+     * @return BaseEntity|Product
      */
-    public function create(UserDTO $userDTO): User
+    public function create(BaseDTO $dto): BaseEntity
     {
-        $user = $this->transformer->reverseTransform($userDTO);
+        $product = $this->transformer->reverseTransform($dto);
 
-        $this->entityManager->persist($user);
+        $this->entityManager->persist($product);
         $this->entityManager->flush();
 
-        return $user;
+        return $product;
+    }
+
+    /**
+     * @param BaseEntity $entity
+     * @param BaseDTO $dto
+     * @return BaseEntity
+     */
+    public function update(BaseEntity $entity, BaseDTO $dto): BaseEntity
+    {
+        $product = $this->transformer->reverseTransform($dto, $entity);
+
+        $this->entityManager->merge($product);
+        $this->entityManager->flush();
+
+        return $product;
     }
 
     /**
      * @return BaseEntity|ProductRepository
      */
-    function getRepository(): BaseRepository
+    public function getRepository(): BaseRepository
     {
         return $this->entityManager->getRepository(Product::class);
     }
+
 }

@@ -1,13 +1,17 @@
 <?php
 namespace App\Controller;
 
+use App\DTO\ProductDTO;
 use App\Entity\Product;
 use App\Handler\ProductHandler;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Request\ParamFetcherInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 class ProductController extends Controller
 {
@@ -50,5 +54,47 @@ class ProductController extends Controller
     public function getAction(Product $product)
     {
         return $this->json($product, Response::HTTP_OK);
+    }
+
+    /**
+     * @Rest\Post(path="/products", name="app.products.create")
+     * @ParamConverter("productDTO", converter="fos_rest.request_body")
+     *
+     * @param ProductDTO $productDTO
+     * @param ConstraintViolationListInterface $validationErrors
+     * @return JsonResponse
+     */
+    public function createAction(ProductDTO $productDTO, ConstraintViolationListInterface $validationErrors)
+    {
+        if ($validationErrors->count() > 0) {
+            throw new BadRequestHttpException($validationErrors);
+        }
+
+        $product = $this->productHandler->create($productDTO);
+
+        return $this->json($product, Response::HTTP_CREATED);
+    }
+
+    /**
+     * @Rest\Patch(path="/products/{id}", name="app.products.update", requirements={"id":"\d+"})
+     * @ParamConverter("productDTO", converter="fos_rest.request_body")
+     *
+     * @param Product $product
+     * @param ProductDTO $productDTO
+     * @param ConstraintViolationListInterface $validationErrors
+     * @return JsonResponse
+     */
+    public function updateAction(
+        Product $product,
+        ProductDTO $productDTO,
+        ConstraintViolationListInterface $validationErrors
+    ) {
+        if ($validationErrors->count() > 0) {
+            throw new BadRequestHttpException($validationErrors);
+        }
+
+        $product = $this->productHandler->update($product, $productDTO);
+
+        return $this->json($product, Response::HTTP_CREATED);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 namespace App\Transformer;
 
-use App\DTO\AbstractDTO;
+use App\DTO\BaseDTO;
 use App\DTO\UserDTO;
 use App\Entity\BaseEntity;
 use App\Entity\User;
@@ -21,26 +21,29 @@ class UserTransformer implements TransformerInterface
 
     /**
      * @param BaseEntity|User $entity
-     * @return AbstractDTO|UserDTO
+     * @return BaseDTO|UserDTO
      */
-    public function transform(BaseEntity $entity): AbstractDTO
+    public function transform(BaseEntity $entity): BaseDTO
     {
         // TODO: Implement transform() method.
     }
 
     /**
-     * @param AbstractDTO|UserDTO $dto
+     * @param BaseDTO|UserDTO $dto
+     * @param BaseEntity|User|null $entity
      * @return BaseEntity|User
      */
-    public function reverseTransform(AbstractDTO $dto): BaseEntity
+    public function reverseTransform(BaseDTO $dto, ?BaseEntity $entity = null): BaseEntity
     {
-        $user = (new User)
+        $entity = $entity ?: new User();
+
+        $entity
             ->setUsername($dto->username)
             ->setEmail($dto->email);
 
-        $password = $this->encoder->encodePassword($user, $dto->password);
-        $user->setPassword($password);
+        $password = $this->encoder->encodePassword($entity, $dto->password);
+        $entity->setPassword($password);
 
-        return $user;
+        return $entity;
     }
 }

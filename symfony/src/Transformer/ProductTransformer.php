@@ -1,0 +1,33 @@
+<?php
+namespace App\Transformer;
+
+use App\DTO\BaseDTO;
+use App\DTO\ProductDTO;
+use App\Entity\BaseEntity;
+use App\Entity\Product;
+
+class ProductTransformer implements TransformerInterface
+{
+    /**
+     * @param BaseEntity|Product $entity
+     * @return BaseDTO|ProductDTO
+     */
+    public function transform(BaseEntity $entity): BaseDTO
+    {
+        // TODO: Implement transform() method.
+    }
+
+    /**
+     * @param BaseDTO|ProductDTO $dto
+     * @param BaseEntity|Product|null $entity
+     * @return BaseEntity|Product
+     */
+    public function reverseTransform(BaseDTO $dto, ?BaseEntity $entity = null): BaseEntity
+    {
+        $entity = $entity ?: new Product();
+
+        return $entity
+            ->setName($dto->name)
+            ->setPrice($dto->price);
+    }
+}

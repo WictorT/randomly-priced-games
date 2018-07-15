@@ -4,7 +4,7 @@ namespace App\DTO;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class UserDTO extends AbstractDTO
+class UserDTO extends BaseDTO
 {
     /**
      * @Serializer\Type("string")

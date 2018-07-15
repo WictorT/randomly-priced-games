@@ -1,6 +1,8 @@
 <?php
 namespace App\Handler;
 
+use App\DTO\BaseDTO;
+use App\Entity\BaseEntity;
 use App\Repository\BaseRepository;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
@@ -97,7 +99,20 @@ abstract class BaseHandler
     }
 
     /**
+     * @param BaseDTO $dto
+     * @return BaseEntity
+     */
+    abstract public function create(BaseDTO $dto): BaseEntity;
+
+    /**
+     * @param BaseEntity $entity
+     * @param BaseDTO $dto
+     * @return BaseEntity
+     */
+    abstract public function update(BaseEntity $entity, BaseDTO $dto): BaseEntity;
+
+    /**
      * @return BaseRepository
      */
-    abstract function getRepository(): BaseRepository;
+    abstract public function getRepository(): BaseRepository;
 }
