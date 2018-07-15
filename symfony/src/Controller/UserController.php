@@ -40,6 +40,6 @@ class UserController extends Controller
 
         $user = $this->userHandler->create($userDTO);
 
-        return $this->json($user, Response::HTTP_OK);
+        return $this->json($user, Response::HTTP_CREATED);
     }
 }

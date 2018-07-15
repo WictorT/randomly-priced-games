@@ -1,8 +1,12 @@
 <?php
 namespace App\Repository;
 
-use Doctrine\ORM\EntityRepository;
-
-class ProductRepository extends EntityRepository
+class ProductRepository extends BaseRepository
 {
+    /**
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    public function getQueryBuilder() {
+        return $this->createQueryBuilder('p');
+    }
 }

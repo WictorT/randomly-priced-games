@@ -1,11 +1,17 @@
 <?php
 namespace App\Repository;
 
-use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
 
-class UserRepository extends EntityRepository implements UserLoaderInterface
+class UserRepository extends BaseRepository implements UserLoaderInterface
 {
+    /**
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    public function getQueryBuilder() {
+        return $this->createQueryBuilder('u');
+    }
+
     /**
      * @param string $username
      * @return mixed|null|\Symfony\Component\Security\Core\User\UserInterface
