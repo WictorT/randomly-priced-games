@@ -4,7 +4,7 @@ namespace App\DTO;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class UserDTO
+class UserDTO extends AbstractDTO
 {
     /**
      * @Serializer\Type("string")
@@ -39,13 +39,4 @@ class UserDTO
      * @var string
      */
     public $email;
-
-    /**
-     * @Serializer\Type("boolean")
-     *
-     * @Assert\Type("boolean")
-     *
-     * @var boolean
-     */
-    public $isActive;
 }

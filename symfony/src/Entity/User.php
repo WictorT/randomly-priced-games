@@ -12,7 +12,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @UniqueEntity("email")
  * @UniqueEntity("username")
  */
-class User implements UserInterface
+class User extends BaseEntity implements UserInterface
 {
     /**
      * @ORM\Column(type="integer")
@@ -44,11 +44,18 @@ class User implements UserInterface
     private $email;
 
     /**
-     * @ORM\Column(name="is_active", type="boolean")
+     * @var \DateTime
      *
-     * @var boolean
+     * @ORM\Column(name="created_at", type="datetime")
      */
-    private $isActive;
+    private $createdAt;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="updated_at", type="datetime", nullable=true)
+     */
+    private $updatedAt;
 
     /**
      * @return string
@@ -95,24 +102,6 @@ class User implements UserInterface
     }
 
     /**
-     * @return bool
-     */
-    public function isActive(): bool
-    {
-        return $this->isActive;
-    }
-
-    /**
-     * @param bool $isActive
-     * @return User
-     */
-    public function setIsActive(bool $isActive): User
-    {
-        $this->isActive = $isActive;
-        return $this;
-    }
-
-    /**
      * @return null|string
      */
     public function getSalt(): ?string
@@ -139,6 +128,22 @@ class User implements UserInterface
     }
 
     /**
+     * @return \DateTime
+     */
+    public function getCreatedAt(): \DateTime
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getUpdatedAt(): ?\DateTime
+    {
+        return $this->updatedAt;
+    }
+
+    /**
      * @return array
      */
     public function getRoles()
@@ -152,8 +157,22 @@ class User implements UserInterface
 
     /**
      * @ORM\PrePersist()
+     *
+     * @return void
      */
-    public function prePersist() {
-        $this->setIsActive(true);
+    public function prePersist(): void
+    {
+        $this->createdAt = new \DateTime();
+        $this->updatedAt = new \DateTime();
+    }
+
+    /**
+     * @ORM\PreUpdate()
+     *
+     * @return void
+     */
+    public function preUpdate(): void
+    {
+        $this->updatedAt = new \DateTime();
     }
 }
