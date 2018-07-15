@@ -28,7 +28,7 @@ class CartItem extends BaseEntity
     private $count;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Product")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Product", inversedBy="cartItems")
      *
      * @var Product
      */
@@ -97,14 +97,6 @@ class CartItem extends BaseEntity
     {
         $this->product = $product;
         return $this;
-    }
-
-    /**
-     * @return User
-     */
-    public function getUser(): User
-    {
-        return $this->user;
     }
 
     /**

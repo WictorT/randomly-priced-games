@@ -1,6 +1,7 @@
 <?php
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -33,6 +34,13 @@ class Product extends BaseEntity
      * @var float
      */
     private $price;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\CartItem", mappedBy="product", cascade={"remove"})
+     *
+     * @var CartItem[]|ArrayCollection
+     */
+    private $cartItems;
 
     /**
      * @var \DateTime

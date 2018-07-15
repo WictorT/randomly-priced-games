@@ -3,6 +3,7 @@ namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\PersistentCollection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -45,7 +46,7 @@ class User extends BaseEntity implements UserInterface
     private $email;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\CartItem", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="App\Entity\CartItem", mappedBy="user", cascade={"persist", "remove"})
      *
      * @var CartItem[]|ArrayCollection
      */
@@ -141,9 +142,9 @@ class User extends BaseEntity implements UserInterface
     }
 
     /**
-     * @return CartItem[]|ArrayCollection
+     * @return CartItem[]|ArrayCollection|PersistentCollection
      */
-    public function getCartItems(): ArrayCollection
+    public function getCartItems()
     {
         return $this->cartItems;
     }
