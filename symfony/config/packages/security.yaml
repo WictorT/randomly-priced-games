@@ -4,7 +4,6 @@ security:
             algorithm: bcrypt
 
     providers:
-        in_memory: { memory: ~ }
         db_user_provider:
             entity:
                 class: App\Entity\User

@@ -4,15 +4,15 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Table(name="rpg_users")
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @ORM\HasLifecycleCallbacks()
  * @UniqueEntity("email")
  * @UniqueEntity("username")
  */
-class User implements UserInterface, \Serializable
+class User implements UserInterface
 {
     /**
      * @ORM\Column(type="integer")
@@ -25,20 +25,12 @@ class User implements UserInterface, \Serializable
     /**
      * @ORM\Column(type="string", length=25, unique=true)
      *
-     * @Assert\NotBlank()
-     * @Assert\Type("string")
-     * @Assert\Length(max=25)
-     *
      * @var string
      */
     private $username;
 
     /**
      * @ORM\Column(type="string", length=64)
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type("string")
-     * @Assert\Length(max=64)
      *
      * @var string
      */
@@ -47,11 +39,6 @@ class User implements UserInterface, \Serializable
     /**
      * @ORM\Column(type="string", length=254, unique=true)
      *
-     * @Assert\NotBlank()
-     * @Assert\Type("string")
-     * @Assert\Length(max=254)
-     * @Assert\Email()
-     *
      * @var string
      */
     private $email;
@@ -59,16 +46,9 @@ class User implements UserInterface, \Serializable
     /**
      * @ORM\Column(name="is_active", type="boolean")
      *
-     * @Assert\Type("boolean")
-     *
      * @var boolean
      */
     private $isActive;
-
-    public function __construct()
-    {
-        $this->isActive = true;
-    }
 
     /**
      * @return string
@@ -89,9 +69,9 @@ class User implements UserInterface, \Serializable
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -135,11 +115,9 @@ class User implements UserInterface, \Serializable
     /**
      * @return null|string
      */
-    public function getSalt()
+    public function getSalt(): ?string
     {
-        // you *may* need a real salt depending on your encoder
-        // see section on salt below
-        return null;
+        return 'Cpo02N(o.<s`^0B@2U,./|-bc^C49H+4@r5soL9Z/ldQ2Xnf=+}xg:jrzq*=>SGx';
     }
 
     /**
@@ -155,7 +133,7 @@ class User implements UserInterface, \Serializable
     /**
      * @return string
      */
-    public function getPassword()
+    public function getPassword(): string
     {
         return $this->password;
     }
@@ -172,27 +150,10 @@ class User implements UserInterface, \Serializable
     {
     }
 
-    /** @see \Serializable::serialize() */
-    public function serialize()
-    {
-        return serialize(array(
-            $this->id,
-            $this->username,
-            $this->password,
-            // see section on salt below
-            // $this->salt,
-        ));
-    }
-
-    /** @see \Serializable::unserialize() */
-    public function unserialize($serialized)
-    {
-        list (
-            $this->id,
-            $this->username,
-            $this->password,
-            // see section on salt below
-            // $this->salt
-            ) = unserialize($serialized, array('allowed_classes' => false));
+    /**
+     * @ORM\PrePersist()
+     */
+    public function prePersist() {
+        $this->setIsActive(true);
     }
 }
