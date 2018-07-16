@@ -3,7 +3,7 @@ namespace App\Handler;
 
 use App\DTO\UserDTO;
 use App\Entity\User;
-use App\Transformer\UserTransformer;
+use App\Transformer\UserBaseTransformer;
 use Doctrine\ORM\EntityManagerInterface;
 
 class UserHandler
@@ -11,16 +11,16 @@ class UserHandler
     /** @var EntityManagerInterface */
     private $entityManager;
 
-    /** @var UserTransformer */
+    /** @var UserBaseTransformer */
     private $transformer;
 
     /**
      * @param EntityManagerInterface $entityManager
-     * @param UserTransformer $transformer
+     * @param UserBaseTransformer $transformer
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        UserTransformer $transformer
+        UserBaseTransformer $transformer
     ) {
         $this->entityManager = $entityManager;
         $this->transformer = $transformer;
