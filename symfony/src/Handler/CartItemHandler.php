@@ -8,6 +8,7 @@ use App\Entity\Product;
 use App\Entity\User;
 use App\Repository\BaseRepository;
 use App\Repository\ProductRepository;
+use App\Transformer\CartItemTransformer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -17,13 +18,19 @@ class CartItemHandler
     /** @var EntityManagerInterface */
     private $entityManager;
 
+    /** @var CartItemTransformer */
+    private $transformer;
+
     /**
      * @param EntityManagerInterface $entityManager
+     * @param CartItemTransformer $transformer
      */
     public function __construct(
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        CartItemTransformer $transformer
     ) {
         $this->entityManager = $entityManager;
+        $this->transformer = $transformer;
     }
 
     /**
@@ -34,7 +41,7 @@ class CartItemHandler
         $cartItems = $user->getCartItems();
 
         return [
-            'items' => $cartItems,
+            'items' => $this->transformer->transformCollection($cartItems),
             'total_price' => $this->getTotalPrice($cartItems),
         ];
     }

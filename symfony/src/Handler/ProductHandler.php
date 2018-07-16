@@ -7,7 +7,7 @@ use App\Entity\BaseEntity;
 use App\Entity\Product;
 use App\Repository\BaseRepository;
 use App\Repository\ProductRepository;
-use App\Transformer\ProductBaseTransformer;
+use App\Transformer\ProductTransformer;
 use Doctrine\ORM\EntityManagerInterface;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
@@ -18,7 +18,7 @@ class ProductHandler
     /** @var EntityManagerInterface */
     private $entityManager;
 
-    /** @var ProductBaseTransformer */
+    /** @var ProductTransformer */
     private $transformer;
 
     /** @var UrlGeneratorInterface */
@@ -26,12 +26,12 @@ class ProductHandler
 
     /**
      * @param EntityManagerInterface $entityManager
-     * @param ProductBaseTransformer $transformer
+     * @param ProductTransformer $transformer
      * @param UrlGeneratorInterface $router
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        ProductBaseTransformer $transformer,
+        ProductTransformer $transformer,
         UrlGeneratorInterface $router
     ) {
         $this->entityManager = $entityManager;
@@ -71,8 +71,55 @@ class ProductHandler
             "total_pages" => $paginator->getNbPages(),
             "total_count" => $paginator->getNbResults(),
             "links" => $this->getPaginationLinks($paginator),
-            'data' => $pageResults
+            'data' => $this->transformer->transformCollection($pageResults)
         ];
+    }
+
+    /**
+     * @param BaseDTO|ProductDTO $productDto
+     * @return BaseEntity|Product
+     */
+    public function create(BaseDTO $productDto): BaseEntity
+    {
+        $product = $this->transformer->reverseTransform($productDto);
+
+        $this->entityManager->persist($product);
+        $this->entityManager->flush();
+
+        return $product;
+    }
+
+    /**
+     * @param BaseEntity $product
+     * @param BaseDTO $productDto
+     * @return BaseEntity
+     */
+    public function update(BaseEntity $product, BaseDTO $productDto): BaseEntity
+    {
+        $product = $this->transformer->reverseTransform($productDto, $product);
+
+        $this->entityManager->merge($product);
+        $this->entityManager->flush();
+
+        return $product;
+    }
+
+    /**
+     * @param BaseEntity|Product $product
+     * @return void
+     */
+    public function delete(BaseEntity $product): void
+    {
+        $this->entityManager->remove($product);
+        $this->entityManager->flush();
+    }
+
+    /**
+     * @return BaseEntity|ProductRepository
+     */
+    public function getRepository(): BaseRepository
+    {
+        return $this->entityManager->getRepository(Product::class);
     }
 
     /**
@@ -124,52 +171,5 @@ class ProductHandler
         );
 
         return $links;
-    }
-
-    /**
-     * @param BaseDTO|ProductDTO $productDto
-     * @return BaseEntity|Product
-     */
-    public function create(BaseDTO $productDto): BaseEntity
-    {
-        $product = $this->transformer->reverseTransform($productDto);
-
-        $this->entityManager->persist($product);
-        $this->entityManager->flush();
-
-        return $product;
-    }
-
-    /**
-     * @param BaseEntity $product
-     * @param BaseDTO $productDto
-     * @return BaseEntity
-     */
-    public function update(BaseEntity $product, BaseDTO $productDto): BaseEntity
-    {
-        $product = $this->transformer->reverseTransform($productDto, $product);
-
-        $this->entityManager->merge($product);
-        $this->entityManager->flush();
-
-        return $product;
-    }
-
-    /**
-     * @param BaseEntity|Product $product
-     * @return void
-     */
-    public function delete(BaseEntity $product): void
-    {
-        $this->entityManager->remove($product);
-        $this->entityManager->flush();
-    }
-
-    /**
-     * @return BaseEntity|ProductRepository
-     */
-    public function getRepository(): BaseRepository
-    {
-        return $this->entityManager->getRepository(Product::class);
     }
 }
