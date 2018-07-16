@@ -25,6 +25,7 @@ class CartItemTransformer extends BaseTransformer
         $dto = new CartItemDTO();
 
         $dto->id = $entity->getId();
+        $dto->count = $entity->getCount();
         $dto->product = $this->productTransformer->transform($entity->getProduct());
         $dto->createdAt = $entity->getCreatedAt();
         $dto->updatedAt = $entity->getUpdatedAt();

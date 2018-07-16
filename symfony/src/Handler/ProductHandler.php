@@ -71,7 +71,7 @@ class ProductHandler
             "total_pages" => $paginator->getNbPages(),
             "total_count" => $paginator->getNbResults(),
             "links" => $this->getPaginationLinks($paginator),
-            'data' => $this->transformer->transformCollection($pageResults)
+            'data' => $this->transformer->transformMultiple($pageResults)
         ];
     }
 

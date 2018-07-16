@@ -12,6 +12,9 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  */
 class CartItem extends BaseEntity
 {
+    const MAX_ITEMS = 3;
+    const MAX_PRODUCTS_PER_ITEM = 10;
+
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id

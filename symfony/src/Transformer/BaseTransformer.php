@@ -23,7 +23,7 @@ abstract class BaseTransformer
      * @param array|\Iterator $entities
      * @return array
      */
-    public function transformCollection($entities): array
+    public function transformMultiple($entities): array
     {
         $dtos = [];
 

@@ -23,6 +23,11 @@ class CartItemDTO extends BaseDTO
     public $productId;
 
     /**
+     * @var integer
+     */
+    public $count;
+
+    /**
      * @var ProductDTO
      */
     public $product;

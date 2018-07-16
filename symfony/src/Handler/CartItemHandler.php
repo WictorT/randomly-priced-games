@@ -41,7 +41,7 @@ class CartItemHandler
         $cartItems = $user->getCartItems();
 
         return [
-            'items' => $this->transformer->transformCollection($cartItems),
+            'items' => $this->transformer->transformMultiple($cartItems),
             'total_price' => $this->getTotalPrice($cartItems),
         ];
     }
@@ -61,15 +61,17 @@ class CartItemHandler
         $cartItems = $user->getCartItems();
 
         if ($cartItem = $this->getCardItemByProduct($cartItems, $product)) {
-            $newCount = min(10, $cartItem->getCount() + 1);
+            $newCount = min(CartItem::MAX_PRODUCTS_PER_ITEM, $cartItem->getCount() + 1);
             $cartItem->setCount($newCount);
-        } else {
+        } elseif ($cartItems->count() < CartItem::MAX_ITEMS) {
             $cartItem = (new CartItem)
                 ->setUser($user)
                 ->setCount(1)
                 ->setProduct($product);
 
             $cartItems->add($cartItem);
+        } else {
+            throw new BadRequestHttpException("Maximum " . CartItem::MAX_ITEMS . " items can be added to the cart");
         }
 
         $this->entityManager->flush();
@@ -95,10 +97,9 @@ class CartItemHandler
 
             if ($newCount === 0) {
                 $this->entityManager->remove($cartItem);
-                return;
+            } else {
+                $cartItem->setCount($newCount);
             }
-
-            $cartItem->setCount($newCount);
         } else {
             throw new BadRequestHttpException("This item does not exist in the cart");
         }
