@@ -40,7 +40,6 @@ class UserHandler
      */
     public function create(UserDTO $userDTO): User
     {
-
         $user = $this->transformer->reverseTransform($userDTO);
 
         $validationErrors = $this->validator->validate($user);

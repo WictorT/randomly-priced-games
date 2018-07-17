@@ -12,7 +12,6 @@ use App\Repository\ProductRepository;
 use App\Transformer\CartItemTransformer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CartItemHandler
 {
@@ -22,16 +21,22 @@ class CartItemHandler
     /** @var CartItemTransformer */
     private $transformer;
 
+    /** @var ProductHandler */
+    private $productHandler;
+
     /**
      * @param EntityManagerInterface $entityManager
      * @param CartItemTransformer $transformer
+     * @param ProductHandler $productHandler
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        CartItemTransformer $transformer
+        CartItemTransformer $transformer,
+        ProductHandler $productHandler
     ) {
         $this->entityManager = $entityManager;
         $this->transformer = $transformer;
+        $this->productHandler = $productHandler;
     }
 
     /**
@@ -63,10 +68,7 @@ class CartItemHandler
      */
     public function addToCart(User $user, CartItemDTO $productDto): CartItemDTO
     {
-        $product = $this->entityManager->getRepository(Product::class)->find($productDto->productId);
-        if ($product === null) {
-            throw new NotFoundHttpException('Product with this id does not exist');
-        }
+        $product = $this->productHandler->getById($productDto->productId);
 
         $cartItems = $user->getCartItems();
 
@@ -95,11 +97,7 @@ class CartItemHandler
      */
     public function removeFromCart(User $user, CartItemDTO $productDto): void
     {
-        $product = $this->entityManager->getRepository(Product::class)->find($productDto->productId);
-        if ($product === null) {
-            throw new NotFoundHttpException('Product with this id does not exist');
-        }
-
+        $product = $this->productHandler->getById($productDto->productId);
         $cartItems = $user->getCartItems();
 
         if ($cartItem = $this->getCardItemByProduct($cartItems, $product)) {

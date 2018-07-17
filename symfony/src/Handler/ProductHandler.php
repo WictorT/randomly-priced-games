@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -45,6 +46,20 @@ class ProductHandler
         $this->transformer = $transformer;
         $this->router = $router;
         $this->validator = $validator;
+    }
+
+    /**
+     * @param int $productId
+     * @return Product|null
+     */
+    public function getById(int $productId): ?Product
+    {
+        $product = $this->getRepository()->find($productId);
+        if ($product === null) {
+            throw new NotFoundHttpException('Product with this id does not exist');
+        }
+
+        return $product;
     }
 
     /**
