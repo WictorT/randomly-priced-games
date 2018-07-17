@@ -6,7 +6,7 @@ use App\DTO\ProductDTO;
 use App\Entity\BaseEntity;
 use App\Entity\Product;
 
-class ProductTransformer implements TransformerInterface
+class ProductTransformer extends BaseTransformer
 {
     /**
      * @param BaseEntity|Product $entity
@@ -14,7 +14,15 @@ class ProductTransformer implements TransformerInterface
      */
     public function transform(BaseEntity $entity): BaseDTO
     {
-        // TODO: Implement transform() method.
+        $dto = new ProductDTO();
+
+        $dto->id = $entity->getId();
+        $dto->name = $entity->getName();
+        $dto->price = $entity->getPrice();
+        $dto->createdAt = $entity->getCreatedAt();
+        $dto->updatedAt = $entity->getUpdatedAt();
+
+        return $dto;
     }
 
     /**

@@ -7,7 +7,7 @@ use App\Entity\BaseEntity;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-class UserTransformer implements TransformerInterface
+class UserBaseTransformer extends BaseTransformer
 {
     /** @var UserPasswordEncoderInterface */
     private $encoder;

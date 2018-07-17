@@ -53,7 +53,9 @@ class ProductController extends Controller
      */
     public function getAction(Product $product)
     {
-        return $this->json($product, Response::HTTP_OK);
+        $productDto = $this->productHandler->getDto($product);
+
+        return $this->json($productDto, Response::HTTP_OK);
     }
 
     /**

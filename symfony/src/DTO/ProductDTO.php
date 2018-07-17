@@ -7,6 +7,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 class ProductDTO extends BaseDTO
 {
     /**
+     * @var integer
+     */
+    public $id;
+
+    /**
      * @Serializer\Type("string")
      *
      * @Assert\NotBlank()
@@ -26,4 +31,14 @@ class ProductDTO extends BaseDTO
      * @var float
      */
     public $price;
+
+    /**
+     * @var \DateTime
+     */
+    public $createdAt;
+
+    /**
+     * @var \DateTime
+     */
+    public $updatedAt;
 }
