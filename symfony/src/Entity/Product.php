@@ -35,6 +35,7 @@ class Product extends BaseEntity
      */
     private $price;
 
+    // TODO try to remove
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\CartItem", mappedBy="product", cascade={"remove"})
      *
