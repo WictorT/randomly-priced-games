@@ -3,9 +3,9 @@ namespace App\Controller;
 
 use App\DTO\UserDTO;
 use App\Handler\UserHandler;
+use FOS\RestBundle\View\View;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -30,7 +30,7 @@ class UserController extends Controller
      *
      * @param UserDTO $userDTO
      * @param ConstraintViolationListInterface $validationErrors
-     * @return JsonResponse
+     * @return View
      */
     public function create(UserDTO $userDTO, ConstraintViolationListInterface $validationErrors)
     {
@@ -40,6 +40,6 @@ class UserController extends Controller
 
         $user = $this->userHandler->create($userDTO);
 
-        return $this->json($user, Response::HTTP_CREATED);
+        return View::create($user, Response::HTTP_CREATED);
     }
 }

@@ -5,9 +5,9 @@ use App\DTO\CartItemDTO;
 use App\Entity\User;
 use App\Handler\CartItemHandler;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use FOS\RestBundle\View\View;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class CartItemController extends Controller
@@ -27,13 +27,13 @@ class CartItemController extends Controller
      * @Rest\Get(path="user/{id}/cart-items", name="app.user.cart-items.list")
      *
      * @param User $user
-     * @return JsonResponse
+     * @return View
      */
     public function indexAction(User $user)
     {
         $cartItems = $this->cartItemHandler->getAll($user);
 
-        return $this->json($cartItems, Response::HTTP_OK);
+        return View::create($cartItems, Response::HTTP_OK);
     }
 
     /**
@@ -42,12 +42,12 @@ class CartItemController extends Controller
      *
      * @param User $user
      * @param CartItemDTO $cartItemDTO
-     * @return JsonResponse
+     * @return View
      */
     public function addToCartAction(User $user, CartItemDTO $cartItemDTO) {
         $cartItem = $this->cartItemHandler->addToCart($user, $cartItemDTO);
 
-        return $this->json($cartItem, Response::HTTP_OK);
+        return View::create($cartItem, Response::HTTP_OK);
     }
 
     /**
@@ -56,11 +56,11 @@ class CartItemController extends Controller
      *
      * @param User $user
      * @param CartItemDTO $cartItemDTO
-     * @return JsonResponse
+     * @return View
      */
     public function removeFromCartAction(User $user, CartItemDTO $cartItemDTO) {
         $this->cartItemHandler->removeFromCart($user, $cartItemDTO);
 
-        return $this->json(null, Response::HTTP_NO_CONTENT);
+        return View::create(null, Response::HTTP_NO_CONTENT);
     }
 }

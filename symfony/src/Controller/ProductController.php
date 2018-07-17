@@ -5,15 +5,15 @@ use App\DTO\ProductDTO;
 use App\Entity\Product;
 use App\Handler\ProductHandler;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Request\ParamFetcherInterface;
+use FOS\RestBundle\View\View;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
-class ProductController extends Controller
+class ProductController extends FOSRestController
 {
     /** @var ProductHandler $productHandler */
     private $productHandler;
@@ -33,7 +33,7 @@ class ProductController extends Controller
      * @Rest\QueryParam(name="per_page", nullable=true, requirements="[1-9][0-9]*", strict=true, description="products per page", default="3")
      *
      * @param ParamFetcherInterface $paramFetcher
-     * @return JsonResponse
+     * @return View
      */
     public function indexAction(ParamFetcherInterface $paramFetcher)
     {
@@ -42,20 +42,20 @@ class ProductController extends Controller
             $paramFetcher->get('per_page')
         );
 
-        return $this->json($products, Response::HTTP_OK);
+        return View::create($products, Response::HTTP_OK);
     }
 
     /**
      * @Rest\Get(path="/products/{id}", name="app.products.get", requirements={"id":"\d+"})
      *
      * @param Product $product
-     * @return JsonResponse
+     * @return View
      */
     public function getAction(Product $product)
     {
         $productDto = $this->productHandler->getDto($product);
 
-        return $this->json($productDto, Response::HTTP_OK);
+        return View::create($productDto, Response::HTTP_OK);
     }
 
     /**
@@ -64,7 +64,7 @@ class ProductController extends Controller
      *
      * @param ProductDTO $productDTO
      * @param ConstraintViolationListInterface $validationErrors
-     * @return JsonResponse
+     * @return View
      */
     public function createAction(ProductDTO $productDTO, ConstraintViolationListInterface $validationErrors)
     {
@@ -74,7 +74,7 @@ class ProductController extends Controller
 
         $product = $this->productHandler->create($productDTO);
 
-        return $this->json($product, Response::HTTP_CREATED);
+        return View::create($product, Response::HTTP_CREATED);
     }
 
     /**
@@ -84,7 +84,7 @@ class ProductController extends Controller
      * @param Product $product
      * @param ProductDTO $productDTO
      * @param ConstraintViolationListInterface $validationErrors
-     * @return JsonResponse
+     * @return View
      */
     public function updateAction(
         Product $product,
@@ -97,18 +97,18 @@ class ProductController extends Controller
 
         $product = $this->productHandler->update($product, $productDTO);
 
-        return $this->json($product, Response::HTTP_OK);
+        return View::create($product, Response::HTTP_OK);
     }
 
     /**
      * @Rest\Delete(path="/products/{id}", name="app.products.delete", requirements={"id":"\d+"})
      *
      * @param Product $product
-     * @return JsonResponse
+     * @return View
      */
     public function deleteAction(Product $product) {
         $this->productHandler->delete($product);
 
-        return $this->json(null, Response::HTTP_NO_CONTENT);
+        return View::create(null, Response::HTTP_NO_CONTENT);
     }
 }
