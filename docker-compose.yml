@@ -2,7 +2,7 @@ version: '2'
 
 services:
     db:
-        image: mysql
+        image: mysql:8.0.11
         volumes:
             - "./.data/db:/var/lib/mysql"
 #        TODO remove external port
