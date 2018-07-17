@@ -2,7 +2,6 @@
 namespace App\Controller;
 
 use App\DTO\CartItemDTO;
-use App\Entity\User;
 use App\Handler\CartItemHandler;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
@@ -24,41 +23,44 @@ class CartItemController extends Controller
     }
 
     /**
-     * @Rest\Get(path="user/{id}/cart-items", name="app.user.cart-items.list")
+     * @Rest\Get(path="/cart-items", name="app.cart-items.list")
      *
-     * @param User $user
      * @return View
      */
-    public function indexAction(User $user)
+    public function indexAction()
     {
+        $user = $this->getUser();
+
         $cartItems = $this->cartItemHandler->getAll($user);
 
         return View::create($cartItems, Response::HTTP_OK);
     }
 
     /**
-     * @Rest\Post(path="user/{id}/cart-items/add", name="app.user.cart-items.add")
+     * @Rest\Post(path="/cart-items/add", name="app.cart-items.add")
      * @ParamConverter("cartItemDTO", converter="fos_rest.request_body")
      *
-     * @param User $user
      * @param CartItemDTO $cartItemDTO
      * @return View
      */
-    public function addToCartAction(User $user, CartItemDTO $cartItemDTO) {
+    public function addToCartAction(CartItemDTO $cartItemDTO) {
+        $user = $this->getUser();
+
         $cartItem = $this->cartItemHandler->addToCart($user, $cartItemDTO);
 
         return View::create($cartItem, Response::HTTP_OK);
     }
 
     /**
-     * @Rest\Post(path="user/{id}/cart-items/remove", name="app.user.cart-items.remove")
+     * @Rest\Post(path="/cart-items/remove", name="app.cart-items.remove")
      * @ParamConverter("cartItemDTO", converter="fos_rest.request_body")
      *
-     * @param User $user
      * @param CartItemDTO $cartItemDTO
      * @return View
      */
-    public function removeFromCartAction(User $user, CartItemDTO $cartItemDTO) {
+    public function removeFromCartAction(CartItemDTO $cartItemDTO) {
+        $user = $this->getUser();
+
         $this->cartItemHandler->removeFromCart($user, $cartItemDTO);
 
         return View::create(null, Response::HTTP_NO_CONTENT);

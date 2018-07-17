@@ -11,7 +11,9 @@ use App\Transformer\ProductTransformer;
 use Doctrine\ORM\EntityManagerInterface;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ProductHandler
 {
@@ -24,19 +26,25 @@ class ProductHandler
     /** @var UrlGeneratorInterface */
     private $router;
 
+    /** @var ValidatorInterface */
+    private $validator;
+
     /**
      * @param EntityManagerInterface $entityManager
      * @param ProductTransformer $transformer
      * @param UrlGeneratorInterface $router
+     * @param ValidatorInterface $validator
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         ProductTransformer $transformer,
-        UrlGeneratorInterface $router
+        UrlGeneratorInterface $router,
+        ValidatorInterface $validator
     ) {
         $this->entityManager = $entityManager;
         $this->transformer = $transformer;
         $this->router = $router;
+        $this->validator = $validator;
     }
 
     /**
@@ -83,6 +91,11 @@ class ProductHandler
     {
         $product = $this->transformer->reverseTransform($productDto);
 
+        $validationErrors = $this->validator->validate($product);
+        if ($validationErrors->count() > 0) {
+            throw new BadRequestHttpException($validationErrors);
+        }
+
         $this->entityManager->persist($product);
         $this->entityManager->flush();
 
@@ -97,6 +110,11 @@ class ProductHandler
     public function update(BaseEntity $product, BaseDTO $productDto): BaseEntity
     {
         $product = $this->transformer->reverseTransform($productDto, $product);
+
+        $validationErrors = $this->validator->validate($product);
+        if ($validationErrors->count() > 0) {
+            throw new BadRequestHttpException($validationErrors);
+        }
 
         $this->entityManager->merge($product);
         $this->entityManager->flush();

@@ -6,10 +6,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class ProductDTO extends BaseDTO
 {
-    /**
-     * @var integer
-     */
-    public $id;
 
     /**
      * @Serializer\Type("string")
@@ -21,6 +17,11 @@ class ProductDTO extends BaseDTO
      * @var string
      */
     public $name;
+
+    /**
+     * @var integer
+     */
+    public $id;
 
     /**
      * @Serializer\Type("float")

@@ -1,6 +1,7 @@
 <?php
 namespace App\Handler;
 
+use App\DTO\BaseDTO;
 use App\DTO\CartItemDTO;
 use App\Entity\BaseEntity;
 use App\Entity\CartItem;
@@ -34,6 +35,15 @@ class CartItemHandler
     }
 
     /**
+     * @param BaseEntity|CartItem $cartItem
+     * @return BaseDTO|CartItemDTO
+     */
+    public function getDto(BaseEntity $cartItem): BaseDTO
+    {
+        return $this->transformer->transform($cartItem);
+    }
+
+    /**
      * @param User $user
      * @return array
      */
@@ -49,9 +59,9 @@ class CartItemHandler
     /**
      * @param User $user
      * @param CartItemDTO $productDto
-     * @return CartItem
+     * @return CartItemDTO
      */
-    public function addToCart(User $user, CartItemDTO $productDto): CartItem
+    public function addToCart(User $user, CartItemDTO $productDto): CartItemDTO
     {
         $product = $this->entityManager->getRepository(Product::class)->find($productDto->productId);
         if ($product === null) {
@@ -76,7 +86,7 @@ class CartItemHandler
 
         $this->entityManager->flush();
 
-        return $cartItem;
+        return $this->getDto($cartItem);
     }
 
     /**

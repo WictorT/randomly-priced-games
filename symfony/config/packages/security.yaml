@@ -15,6 +15,6 @@ security:
             security: false
 
         main:
-            pattern:    ^(?!/register)
+            pattern:    ^/(?!register)
             http_basic: ~
             provider: db_user_provider

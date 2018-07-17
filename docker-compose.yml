@@ -7,7 +7,7 @@ services:
             - "./.data/db:/var/lib/mysql"
 #        TODO remove external port
         ports:
-            - 3306:3306
+            - 9001:3306
         environment:
             MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
             MYSQL_DATABASE: ${MYSQL_DATABASE}

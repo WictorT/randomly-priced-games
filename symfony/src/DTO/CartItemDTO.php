@@ -6,10 +6,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class CartItemDTO extends BaseDTO
 {
-    /**
-     * @var integer
-     */
-    public $id;
 
     /**
      * @Serializer\Type("integer")
@@ -21,6 +17,11 @@ class CartItemDTO extends BaseDTO
      * @var integer
      */
     public $productId;
+
+    /**
+     * @var integer
+     */
+    public $id;
 
     /**
      * @var integer

@@ -2,13 +2,11 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Table(name="rpg_cart_items")
  * @ORM\Entity(repositoryClass="App\Repository\CartItemRepository")
  * @ORM\HasLifecycleCallbacks()
- * @UniqueEntity("name")
  */
 class CartItem extends BaseEntity
 {
