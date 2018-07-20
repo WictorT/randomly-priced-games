@@ -27,7 +27,7 @@ class ProductController extends FOSRestController
     }
 
     /**
-     * @Rest\Get(path="/products", name="app.products.list")
+     * @Rest\Get(path="/api/products", name="app.products.list")
      *
      * @Rest\QueryParam(name="page", nullable=true, requirements="[1-9][0-9]*", strict=true, description="page", default="1")
      * @Rest\QueryParam(name="per_page", nullable=true, requirements="[1-9][0-9]*", strict=true, description="products per page", default="3")

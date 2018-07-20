@@ -7,6 +7,7 @@
         "ext-iconv": "*",
         "friendsofsymfony/rest-bundle": "^2.3",
         "jms/serializer-bundle": "^2.4",
+        "lexik/jwt-authentication-bundle": "^2.5",
         "pagerfanta/pagerfanta": "^2.0",
         "sensio/framework-extra-bundle": "^5.2",
         "symfony/console": "^4.1",
