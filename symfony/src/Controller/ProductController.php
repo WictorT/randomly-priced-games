@@ -13,6 +13,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
+/**
+ * @Rest\Route("/api")
+ */
 class ProductController extends FOSRestController
 {
     /** @var ProductHandler $productHandler */
@@ -27,7 +30,7 @@ class ProductController extends FOSRestController
     }
 
     /**
-     * @Rest\Get(path="/api/products", name="app.products.list")
+     * @Rest\Get(path="/products", name="app.products.list")
      *
      * @Rest\QueryParam(
      *     name="page",

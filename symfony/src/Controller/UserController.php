@@ -11,6 +11,9 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
+/**
+ * @Rest\Route("/api")
+ */
 class UserController extends Controller
 {
     /** @var UserHandler $userHandler */
@@ -31,6 +34,7 @@ class UserController extends Controller
      * @param UserDTO $userDTO
      * @param ConstraintViolationListInterface $validationErrors
      * @return View
+     * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      */
     public function signUpAction(UserDTO $userDTO, ConstraintViolationListInterface $validationErrors): View
     {
