@@ -20,15 +20,20 @@ class ExceptionListener
         $this->serializer = $serializer;
     }
 
-    public function onKernelException(GetResponseForExceptionEvent $event)
+    /**
+     * @param GetResponseForExceptionEvent $event
+     */
+    public function onKernelException(GetResponseForExceptionEvent $event): void
     {
-        // You get the exception object from the received event
         $exception = $event->getException();
-        $message = sprintf(
-            'My Error says: %s with code: %s',
-            $exception->getMessage(),
-            $exception->getCode()
-        );
+
+        $message = [
+            'message' => 'Oops... an expected feature occurred',
+            'error' => [
+                'code' => $exception->getCode(),
+                'message' => $exception->getMessage(),
+            ]
+        ];
 
         $json = $this->serializer->serialize($message, 'json', array_merge(array(
             'json_encode_options' => JsonResponse::DEFAULT_ENCODING_OPTIONS,
@@ -36,21 +41,15 @@ class ExceptionListener
 
         $response = new JsonResponse($json, 200, [], true);
 
-
-//        $response->setContent($message);
-
-        // HttpExceptionInterface is a special type of exception that
-        // holds status code and header details
         if ($exception instanceof HttpExceptionInterface) {
             $response->setStatusCode($exception->getStatusCode());
             $response->headers->replace($exception->getHeaders());
             $response->headers->add(['Content-Type' => 'application/json']);
         } else {
+            $response = new JsonResponse($json, 200, [], true);
             $response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-
-        // sends the modified response object to the event
         $event->setResponse($response);
     }
 }
