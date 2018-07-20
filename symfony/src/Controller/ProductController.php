@@ -29,13 +29,27 @@ class ProductController extends FOSRestController
     /**
      * @Rest\Get(path="/api/products", name="app.products.list")
      *
-     * @Rest\QueryParam(name="page", nullable=true, requirements="[1-9][0-9]*", strict=true, description="page", default="1")
-     * @Rest\QueryParam(name="per_page", nullable=true, requirements="[1-9][0-9]*", strict=true, description="products per page", default="3")
+     * @Rest\QueryParam(
+     *     name="page",
+     *     nullable=true,
+     *     requirements="[1-9][0-9]*",
+     *     strict=true,
+     *     description="page",
+     *     default="1"
+     * )
+     * @Rest\QueryParam(
+     *     name="per_page",
+     *     nullable=true,
+     *     requirements="[1-9][0-9]*",
+     *     strict=true,
+     *     description="products per page",
+     *     default="3"
+     * )
      *
      * @param ParamFetcherInterface $paramFetcher
      * @return View
      */
-    public function indexAction(ParamFetcherInterface $paramFetcher)
+    public function indexAction(ParamFetcherInterface $paramFetcher): View
     {
         $products = $this->productHandler->getPaginated(
             $paramFetcher->get('page'),
@@ -51,7 +65,7 @@ class ProductController extends FOSRestController
      * @param Product $product
      * @return View
      */
-    public function getAction(Product $product)
+    public function getAction(Product $product): View
     {
         $productDto = $this->productHandler->getDto($product);
 
@@ -65,8 +79,9 @@ class ProductController extends FOSRestController
      * @param ProductDTO $productDTO
      * @param ConstraintViolationListInterface $validationErrors
      * @return View
+     * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      */
-    public function createAction(ProductDTO $productDTO, ConstraintViolationListInterface $validationErrors)
+    public function createAction(ProductDTO $productDTO, ConstraintViolationListInterface $validationErrors): View
     {
         if ($validationErrors->count() > 0) {
             throw new BadRequestHttpException($validationErrors);
@@ -85,17 +100,18 @@ class ProductController extends FOSRestController
      * @param ProductDTO $productDTO
      * @param ConstraintViolationListInterface $validationErrors
      * @return View
+     * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      */
     public function updateAction(
         Product $product,
         ProductDTO $productDTO,
         ConstraintViolationListInterface $validationErrors
-    ) {
+    ): View {
         if ($validationErrors->count() > 0) {
             throw new BadRequestHttpException($validationErrors);
         }
 
-        $product = $this->productHandler->update($product, $productDTO);
+        $this->productHandler->update($product, $productDTO);
 
         return View::create($product, Response::HTTP_OK);
     }
@@ -106,7 +122,8 @@ class ProductController extends FOSRestController
      * @param Product $product
      * @return View
      */
-    public function deleteAction(Product $product) {
+    public function deleteAction(Product $product): View
+    {
         $this->productHandler->delete($product);
 
         return View::create(null, Response::HTTP_NO_CONTENT);

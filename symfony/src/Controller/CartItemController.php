@@ -27,7 +27,7 @@ class CartItemController extends Controller
      *
      * @return View
      */
-    public function indexAction()
+    public function indexAction(): View
     {
         $user = $this->getUser();
 
@@ -43,7 +43,8 @@ class CartItemController extends Controller
      * @param CartItemDTO $cartItemDTO
      * @return View
      */
-    public function addToCartAction(CartItemDTO $cartItemDTO) {
+    public function addToCartAction(CartItemDTO $cartItemDTO): View
+    {
         $user = $this->getUser();
 
         $cartItem = $this->cartItemHandler->addToCart($user, $cartItemDTO);
@@ -58,7 +59,8 @@ class CartItemController extends Controller
      * @param CartItemDTO $cartItemDTO
      * @return View
      */
-    public function removeFromCartAction(CartItemDTO $cartItemDTO) {
+    public function removeFromCartAction(CartItemDTO $cartItemDTO): View
+    {
         $user = $this->getUser();
 
         $this->cartItemHandler->removeFromCart($user, $cartItemDTO);

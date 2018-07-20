@@ -52,7 +52,8 @@ class CartItemHandler
      * @param User $user
      * @return array
      */
-    public function getAll(User $user) {
+    public function getAll(User $user): array
+    {
         $cartItems = $user->getCartItems();
 
         return [
@@ -65,6 +66,7 @@ class CartItemHandler
      * @param User $user
      * @param CartItemDTO $productDto
      * @return CartItemDTO
+     * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      */
     public function addToCart(User $user, CartItemDTO $productDto): CartItemDTO
     {
@@ -83,7 +85,7 @@ class CartItemHandler
 
             $cartItems->add($cartItem);
         } else {
-            throw new BadRequestHttpException("Maximum " . CartItem::MAX_ITEMS . " items can be added to the cart");
+            throw new BadRequestHttpException('Maximum ' . CartItem::MAX_ITEMS . ' items can be added to the cart');
         }
 
         $this->entityManager->flush();
@@ -94,6 +96,7 @@ class CartItemHandler
     /**
      * @param User $user
      * @param CartItemDTO $productDto
+     * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      */
     public function removeFromCart(User $user, CartItemDTO $productDto): void
     {
@@ -109,7 +112,7 @@ class CartItemHandler
                 $cartItem->setCount($newCount);
             }
         } else {
-            throw new BadRequestHttpException("This item does not exist in the cart");
+            throw new BadRequestHttpException('This item does not exist in the cart');
         }
 
         $this->entityManager->flush();

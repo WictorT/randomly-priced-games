@@ -25,14 +25,14 @@ class UserController extends Controller
     }
 
     /**
-     * @Route(path="/register", name="app.users.register", methods={"POST"})
+     * @Route(path="/api/sign-up", name="app.users.sign_up", methods={"POST"})
      * @ParamConverter("userDTO", converter="fos_rest.request_body")
      *
      * @param UserDTO $userDTO
      * @param ConstraintViolationListInterface $validationErrors
      * @return View
      */
-    public function create(UserDTO $userDTO, ConstraintViolationListInterface $validationErrors)
+    public function signUpAction(UserDTO $userDTO, ConstraintViolationListInterface $validationErrors): View
     {
         if ($validationErrors->count() > 0) {
             throw new BadRequestHttpException($validationErrors);

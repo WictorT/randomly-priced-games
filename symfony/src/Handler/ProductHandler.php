@@ -51,6 +51,7 @@ class ProductHandler
     /**
      * @param int $productId
      * @return Product|null
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
     public function getById(int $productId): ?Product
     {
@@ -88,12 +89,12 @@ class ProductHandler
         $pageResults = $paginator->getCurrentPageResults();
 
         return [
-            "page" => $paginator->getCurrentPage(),
-            "per_page" => $paginator->getMaxPerPage(),
-            "page_count" => count($pageResults),
-            "total_pages" => $paginator->getNbPages(),
-            "total_count" => $paginator->getNbResults(),
-            "links" => $this->getPaginationLinks($paginator),
+            'page' => $paginator->getCurrentPage(),
+            'per_page' => $paginator->getMaxPerPage(),
+            'page_count' => \count($pageResults),
+            'total_pages' => $paginator->getNbPages(),
+            'total_count' => $paginator->getNbResults(),
+            'links' => $this->getPaginationLinks($paginator),
             'data' => $this->transformer->transformMultiple($pageResults)
         ];
     }
@@ -101,6 +102,7 @@ class ProductHandler
     /**
      * @param BaseDTO|ProductDTO $productDto
      * @return BaseEntity|Product
+     * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      */
     public function create(BaseDTO $productDto): BaseEntity
     {
@@ -121,6 +123,7 @@ class ProductHandler
      * @param BaseEntity $product
      * @param BaseDTO $productDto
      * @return BaseEntity
+     * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      */
     public function update(BaseEntity $product, BaseDTO $productDto): BaseEntity
     {
