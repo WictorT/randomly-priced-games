@@ -23,7 +23,12 @@ class ApiTestCase extends WebTestCase
     /**
      * @var Client
      */
-    protected $client;
+    protected $unauthorizedClient;
+
+    /**
+     * @var Client
+     */
+    protected $authorizedClient;
 
     protected function setUp()
     {
@@ -33,7 +38,13 @@ class ApiTestCase extends WebTestCase
         $this->entityManager = static::$container->get('doctrine')->getManager();
         $this->router = static::$container->get('router');
         // TODO separate unauthorizaed client
-        $this->client = static::createClient(
+        $this->unauthorizedClient = static::createClient(
+            [],
+            [
+                'CONTENT_TYPE' => 'application/json',
+            ]
+        );
+        $this->authorizedClient = static::createClient(
             [],
             [
                 'CONTENT_TYPE' => 'application/json',

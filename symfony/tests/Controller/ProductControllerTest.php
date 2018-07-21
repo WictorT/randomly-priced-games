@@ -13,17 +13,17 @@ class ProductControllerTest extends ApiTestCase
 
     public function testIndexActionSuccess()
     {
-        $this->client->request(
+        $this->unauthorizedClient->request(
             'GET',
             $this->router->generate('app.products.list')
         );
 
-        $response = $this->client->getResponse();
+        $response = $this->unauthorizedClient->getResponse();
         $responseContent = json_decode($response->getContent());
 
         $products = $this->entityManager->getRepository(Product::class)->findAll();
         $productsCount = count($products);
-        $pagesCount = (int)($productsCount / self::DEFAULT_PER_PAGE) + 1;
+        $pagesCount = (int)($productsCount / self::DEFAULT_PER_PAGE) + (bool)($productsCount % self::DEFAULT_PER_PAGE);
         $pageCount = min(self::DEFAULT_PER_PAGE, $productsCount);
 
         $this->assertEquals(
@@ -75,12 +75,12 @@ class ProductControllerTest extends ApiTestCase
             $this->entityManager->flush();
         }
 
-        $this->client->request(
+        $this->unauthorizedClient->request(
             'GET',
             $this->router->generate('app.products.get', ['id' => $product->getId()])
         );
 
-        $response = $this->client->getResponse();
+        $response = $this->unauthorizedClient->getResponse();
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals(
@@ -114,12 +114,12 @@ class ProductControllerTest extends ApiTestCase
         $product && $this->entityManager->remove($product);
         $this->entityManager->flush();
 
-        $this->client->request(
+        $this->unauthorizedClient->request(
             'GET',
             $this->router->generate('app.products.get', ['id' => 2077])
         );
 
-        $response = $this->client->getResponse();
+        $response = $this->unauthorizedClient->getResponse();
 
         $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
     }
@@ -135,12 +135,12 @@ class ProductControllerTest extends ApiTestCase
             $this->entityManager->flush();
         }
 
-        $this->client->request(
+        $this->authorizedClient->request(
             'DELETE',
             $this->router->generate('app.products.delete', ['id' => $product->getId()])
         );
 
-        $response = $this->client->getResponse();
+        $response = $this->authorizedClient->getResponse();
 
         $this->assertEquals(
             [
@@ -165,13 +165,25 @@ class ProductControllerTest extends ApiTestCase
             $this->entityManager->flush();
         }
 
-        $this->client->request(
+        $this->authorizedClient->request(
             'DELETE',
             $this->router->generate('app.products.delete', ['id' => 2077])
         );
 
-        $response = $this->client->getResponse();
+        $response = $this->authorizedClient->getResponse();
 
         $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
+    }
+
+    public function testDeleteActionReturnsUnauthorized()
+    {
+        $this->unauthorizedClient->request(
+            'DELETE',
+            $this->router->generate('app.products.delete', ['id' => 2077])
+        );
+
+        $response = $this->unauthorizedClient->getResponse();
+
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 }

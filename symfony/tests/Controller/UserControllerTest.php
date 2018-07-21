@@ -31,8 +31,7 @@ class UserControllerTest extends ApiTestCase
         $user && $this->entityManager->remove($user);
         $this->entityManager->flush();
 
-        $client = static::createClient();
-        $client->request(
+        $this->unauthorizedClient->request(
             'POST',
             $this->router->generate('app.users.sign_up'),
             [],
@@ -47,7 +46,7 @@ class UserControllerTest extends ApiTestCase
             ])
         );
 
-        $response = $client->getResponse();
+        $response = $this->unauthorizedClient->getResponse();
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals(
@@ -94,8 +93,7 @@ class UserControllerTest extends ApiTestCase
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        $client = static::createClient();
-        $client->request(
+        $this->unauthorizedClient->request(
             'POST',
             $this->router->generate('app.users.sign_up'),
             [],
@@ -110,6 +108,6 @@ class UserControllerTest extends ApiTestCase
             ])
         );
 
-        $this->assertEquals(Response::HTTP_BAD_REQUEST, $client->getResponse()->getStatusCode());
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $this->unauthorizedClient->getResponse()->getStatusCode());
     }
 }
