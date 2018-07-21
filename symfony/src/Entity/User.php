@@ -16,6 +16,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class User extends BaseEntity implements UserInterface
 {
+    const TOTAL_CART_PRICE_KEY_PREFIX = 'total_cart_price_for_user_';
+
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id

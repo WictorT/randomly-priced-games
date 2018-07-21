@@ -95,17 +95,9 @@ class CartItemHandler
         $cartItem = $this->getCardItemByProduct($cartItems, $product);
 
         if ($cartItem) {
-            $newCount = min(CartItem::MAX_PRODUCTS_PER_ITEM, $cartItem->getCount() + 1);
-            $cartItem->setCount($newCount);
-        } elseif ($cartItems->count() < CartItem::MAX_ITEMS) {
-            $cartItem = (new CartItem)
-                ->setUser($user)
-                ->setCount(1)
-                ->setProduct($product);
-
-            $cartItems->add($cartItem);
+            $this->increaseCount($cartItem);
         } else {
-            throw new BadRequestHttpException('Maximum ' . CartItem::MAX_ITEMS . ' items can be added to the cart');
+            $this->createNewCartItem($product, $user);
         }
 
         $this->entityManager->flush();
@@ -123,17 +115,12 @@ class CartItemHandler
     public function removeFromCart(User $user, CartItemDTO $productDto): void
     {
         $product = $this->productHandler->getById($productDto->productId);
+
         $cartItems = $user->getCartItems();
         $cartItem = $this->getCardItemByProduct($cartItems, $product);
 
         if ($cartItem) {
-            $newCount = $cartItem->getCount() - 1;
-
-            if ($newCount === 0) {
-                $this->entityManager->remove($cartItem);
-            } else {
-                $cartItem->setCount($newCount);
-            }
+            $this->decreaseCount($cartItem);
         } else {
             throw new BadRequestHttpException('This item does not exist in the cart');
         }
@@ -198,6 +185,49 @@ class CartItemHandler
      */
     private function getTotalPriceCacheKeyForUser(User $user): string
     {
-        return 'total_cart_price_for_user_' . $user->getId();
+        return User::TOTAL_CART_PRICE_KEY_PREFIX . $user->getId();
+    }
+
+    /**
+     * @param CartItem $cartItem
+     */
+    private function increaseCount(CartItem $cartItem): void
+    {
+        $newCount = min(CartItem::MAX_PRODUCTS_PER_ITEM, $cartItem->getCount() + 1);
+        $cartItem->setCount($newCount);
+    }
+
+    /**
+     * @param CartItem $cartItem
+     */
+    private function decreaseCount(CartItem $cartItem): void
+    {
+        $newCount = $cartItem->getCount() - 1;
+
+        if ($newCount === 0) {
+            $this->entityManager->remove($cartItem);
+        } else {
+            $cartItem->setCount($newCount);
+        }
+    }
+
+    /**
+     * @param Product $product
+     * @param User $user
+     */
+    private function createNewCartItem(Product $product, User $user): void
+    {
+        $cartItems = $user->getCartItems();
+
+        if ($cartItems->count() < CartItem::MAX_ITEMS) {
+            $cartItem = (new CartItem)
+                ->setUser($user)
+                ->setCount(1)
+                ->setProduct($product);
+
+            $cartItems->add($cartItem);
+        } else {
+            throw new BadRequestHttpException('Maximum ' . CartItem::MAX_ITEMS . ' items can be added to the cart');
+        }
     }
 }
