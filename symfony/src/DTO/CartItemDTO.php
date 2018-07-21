@@ -6,7 +6,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class CartItemDTO extends BaseDTO
 {
-
     /**
      * @Serializer\Type("integer")
      *
@@ -21,25 +20,10 @@ class CartItemDTO extends BaseDTO
     /**
      * @var integer
      */
-    public $id;
-
-    /**
-     * @var integer
-     */
     public $count;
 
     /**
      * @var ProductDTO
      */
     public $product;
-
-    /**
-     * @var \DateTime
-     */
-    public $createdAt;
-
-    /**
-     * @var \DateTime
-     */
-    public $updatedAt;
 }

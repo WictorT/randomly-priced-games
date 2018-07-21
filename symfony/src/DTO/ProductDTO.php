@@ -18,11 +18,6 @@ class ProductDTO extends BaseDTO
     public $name;
 
     /**
-     * @var integer
-     */
-    public $id;
-
-    /**
      * @Serializer\Type("float")
      *
      * @Assert\NotBlank()
@@ -31,14 +26,4 @@ class ProductDTO extends BaseDTO
      * @var float
      */
     public $price;
-
-    /**
-     * @var \DateTime
-     */
-    public $createdAt;
-
-    /**
-     * @var \DateTime
-     */
-    public $updatedAt;
 }
