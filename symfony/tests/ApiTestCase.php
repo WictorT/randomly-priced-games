@@ -32,7 +32,14 @@ class ApiTestCase extends WebTestCase
 
         $this->entityManager = static::$container->get('doctrine')->getManager();
         $this->router = static::$container->get('router');
-        $this->client = static::createClient([], ['CONTENT_TYPE' => 'application/json']);
+        // TODO separate unauthorizaed client
+        $this->client = static::createClient(
+            [],
+            [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_AUTHORIZATION' => $this->getAccessTokenHeader(),
+            ]
+        );
     }
 
     protected function getAccessTokenHeader()
@@ -73,7 +80,7 @@ class ApiTestCase extends WebTestCase
         $user = (new User)
             ->setUsername('admin')
             ->setEmail('admin@mail.com')
-            ->setPassword('admin');
+            ->setPassword('$2a$08$jHZj/wJfcVKlIwr5AvR78euJxYK7Ku5kURNhNx.7.CSIJ3Pq6LEPC');
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();

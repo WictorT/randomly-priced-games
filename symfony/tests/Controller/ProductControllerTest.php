@@ -109,7 +109,7 @@ class ProductControllerTest extends ApiTestCase
 
     public function testGetActionReturnsNotFound()
     {
-        // Remove product with id 2077 to induce NotFoundHttpException
+        // Try to remove product with id 2077 to induce NotFoundHttpException
         $product = $this->entityManager->find(Product::class, 2077);
         $product && $this->entityManager->remove($product);
         $this->entityManager->flush();
@@ -117,6 +117,57 @@ class ProductControllerTest extends ApiTestCase
         $this->client->request(
             'GET',
             $this->router->generate('app.products.get', ['id' => 2077])
+        );
+
+        $response = $this->client->getResponse();
+
+        $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
+    }
+
+    public function testDeleteActionSucceeds()
+    {
+        $product = $this->entityManager->getRepository(Product::class)->findOneBy(['name' => 'Cyberpunk 2077']);
+        if (!$product) {
+            $product = (new Product)
+                ->setName('Cyberpunk 2077')
+                ->setPrice(59.99);
+            $this->entityManager->persist($product);
+            $this->entityManager->flush();
+        }
+
+        $this->client->request(
+            'DELETE',
+            $this->router->generate('app.products.delete', ['id' => $product->getId()])
+        );
+
+        $response = $this->client->getResponse();
+
+        $this->assertEquals(
+            [
+                'status_code' => Response::HTTP_NO_CONTENT,
+                'removed' => true,
+            ],
+            [
+                'status_code' => $response->getStatusCode(),
+                'removed' => !(bool)$this->entityManager->find(Product::class, 2077)
+            ]
+        );
+    }
+
+    public function testDeleteActionReturnsNotFound()
+    {
+        $product = $this->entityManager->getRepository(Product::class)->findOneBy(['name' => 'Cyberpunk 2077']);
+        if (!$product) {
+            $product = (new Product)
+                ->setName('Cyberpunk 2077')
+                ->setPrice(59.99);
+            $this->entityManager->persist($product);
+            $this->entityManager->flush();
+        }
+
+        $this->client->request(
+            'DELETE',
+            $this->router->generate('app.products.delete', ['id' => 2077])
         );
 
         $response = $this->client->getResponse();
