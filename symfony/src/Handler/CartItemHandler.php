@@ -144,7 +144,8 @@ class CartItemHandler
      */
     private function getTotalCartPriceByUser(User $user): float
     {
-        $cachedValue = $this->cache->get($this->getTotalPriceCacheKeyForUser($user));
+        $totalPriceRedisKey = $this->getTotalPriceCacheKeyForUser($user);
+        $cachedValue = $this->cache->get($totalPriceRedisKey);
         if ($cachedValue) {
             return $cachedValue;
         }
@@ -156,7 +157,7 @@ class CartItemHandler
             $totalPrice += $cartItem->getProduct()->getPrice() * $cartItem->getCount();
         }
 
-        $this->cache->set($this->getTotalPriceCacheKeyForUser($user), $totalPrice);
+        $this->cache->set($totalPriceRedisKey, $totalPrice);
 
         return $totalPrice;
     }
