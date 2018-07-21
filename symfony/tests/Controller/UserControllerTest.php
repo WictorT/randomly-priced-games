@@ -3,18 +3,12 @@
 namespace App\Tests\Controller;
 
 use App\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Tests\ApiTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-class UserControllerTest extends WebTestCase
+class UserControllerTest extends ApiTestCase
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
     /**
      * @var UserPasswordEncoderInterface
      */
@@ -22,34 +16,34 @@ class UserControllerTest extends WebTestCase
 
     protected function setUp()
     {
-        $container = self::bootKernel()->getContainer();
+        parent::setUp();
 
-        $this->entityManager = $container->get('doctrine')->getManager();
-        $this->encoder = $container->get('security.password_encoder');
+        $this->encoder = static::$container->get('security.password_encoder');
     }
 
     public function testSignUpActionSuccess()
     {
-        // remove users with email=admin@mail.com or username=admin to avoid conflict
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['username' => 'admin']);
+        // remove users with email=user@mail.com or username=user to avoid conflict
+        $userRepository = $this->entityManager->getRepository(User::class);
+        $user = $userRepository->findOneBy(['username' => 'user']);
         $user && $this->entityManager->remove($user);
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'admin@mail.com']);
+        $user = $userRepository->findOneBy(['email' => 'user@mail.com']);
         $user && $this->entityManager->remove($user);
         $this->entityManager->flush();
 
         $client = static::createClient();
         $client->request(
             'POST',
-            '/api/sign-up',
+            $this->router->generate('app.users.sign_up'),
             [],
             [],
             [
                 'CONTENT_TYPE' => 'application/json'
             ],
             json_encode([
-                'username' => 'admin',
-                'email' => 'admin@mail.com',
-                'password' => 'admin',
+                'username' => 'user',
+                'email' => 'user@mail.com',
+                'password' => 'user',
             ])
         );
 
@@ -60,8 +54,8 @@ class UserControllerTest extends WebTestCase
             [
                 'status_code' => Response::HTTP_CREATED,
                 'content' => [
-                    'username' => 'admin',
-                    'email' => 'admin@mail.com',
+                    'username' => 'user',
+                    'email' => 'user@mail.com',
                     'cart_items' => [],
                     'password' => 'exists',
                     'created_at' => 'exists',
@@ -84,34 +78,35 @@ class UserControllerTest extends WebTestCase
 
     public function testSignUpActionFails()
     {
-        // remove users with email=admin@mail.com or username=admin
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['username' => 'admin']);
+        // remove users with email=user@mail.com or username=user
+        $userRepository = $this->entityManager->getRepository(User::class);
+        $user = $userRepository->findOneBy(['username' => 'user']);
         $user && $this->entityManager->remove($user);
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'admin@mail.com']);
+        $user = $userRepository->findOneBy(['email' => 'user@mail.com']);
         $user && $this->entityManager->remove($user);
         $this->entityManager->flush();
 
-        // create user with email=admin@mail.com or username=admin to induce validation error
+        // create user with email=user@mail.com or username=user to induce validation error
         $user = (new User)
-            ->setUsername('admin')
-            ->setEmail('admin@mail.com')
-            ->setPassword('admin');
+            ->setUsername('user')
+            ->setEmail('user@mail.com')
+            ->setPassword('user');
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
         $client = static::createClient();
         $client->request(
             'POST',
-            '/api/sign-up',
+            $this->router->generate('app.users.sign_up'),
             [],
             [],
             [
                 'CONTENT_TYPE' => 'application/json'
             ],
             json_encode([
-                'username' => 'admin',
-                'email' => 'admin@mail.com',
-                'password' => 'admin',
+                'username' => 'user',
+                'email' => 'user@mail.com',
+                'password' => 'user',
             ])
         );
 

@@ -4,6 +4,8 @@ namespace App\Tests;
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Client;
+use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class ApiTestCase extends WebTestCase
@@ -13,12 +15,24 @@ class ApiTestCase extends WebTestCase
      */
     protected $entityManager;
 
+    /**
+     * @var Router
+     */
+    protected $router;
+
+    /**
+     * @var Client
+     */
+    protected $client;
+
     protected function setUp()
     {
         parent::setUp();
         static::bootKernel();
 
         $this->entityManager = static::$container->get('doctrine')->getManager();
+        $this->router = static::$container->get('router');
+        $this->client = static::createClient([], ['CONTENT_TYPE' => 'application/json']);
     }
 
     protected function getAccessTokenHeader()
