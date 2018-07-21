@@ -9,7 +9,9 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class ExceptionListener
 {
-    /** @var SerializerInterface */
+    /**
+     * @var SerializerInterface
+     */
     private $serializer;
 
     /**

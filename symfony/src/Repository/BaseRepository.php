@@ -2,8 +2,14 @@
 namespace App\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 
 abstract class BaseRepository extends EntityRepository
 {
-    abstract function getQueryBuilder();
+    /**
+     * @param string $alias
+     *
+     * @return mixed
+     */
+    abstract public function getQueryBuilder(string $alias): QueryBuilder;
 }

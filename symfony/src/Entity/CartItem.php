@@ -17,6 +17,7 @@ class CartItem extends BaseEntity
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
      * @var int
      */
     private $id;
@@ -74,6 +75,7 @@ class CartItem extends BaseEntity
 
     /**
      * @param int $count
+     *
      * @return CartItem
      */
     public function setCount(int $count): CartItem
@@ -92,6 +94,7 @@ class CartItem extends BaseEntity
 
     /**
      * @param Product $product
+     *
      * @return CartItem
      */
     public function setProduct(Product $product): CartItem
@@ -102,6 +105,7 @@ class CartItem extends BaseEntity
 
     /**
      * @param User $user
+     *
      * @return CartItem
      */
     public function setUser(User $user): CartItem

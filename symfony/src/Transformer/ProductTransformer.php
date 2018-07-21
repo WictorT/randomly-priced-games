@@ -10,6 +10,7 @@ class ProductTransformer extends BaseTransformer
 {
     /**
      * @param BaseEntity|Product $entity
+     *
      * @return BaseDTO|ProductDTO
      */
     public function transform(BaseEntity $entity): BaseDTO
@@ -28,6 +29,7 @@ class ProductTransformer extends BaseTransformer
     /**
      * @param BaseDTO|ProductDTO $dto
      * @param BaseEntity|Product|null $entity
+     *
      * @return BaseEntity|Product
      */
     public function reverseTransform(BaseDTO $dto, ?BaseEntity $entity = null): BaseEntity

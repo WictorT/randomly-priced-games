@@ -16,7 +16,9 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
  */
 class UserController extends Controller
 {
-    /** @var UserHandler $userHandler */
+    /**
+     * @var UserHandler
+     */
     private $userHandler;
 
     /**
@@ -28,13 +30,15 @@ class UserController extends Controller
     }
 
     /**
-     * @Rest\Route(path="/api/sign-up", name="app.users.sign_up", methods={"POST"})
+     * @Rest\Route(path="/sign-up", name="app.users.sign_up", methods={"POST"})
      * @ParamConverter("userDTO", converter="fos_rest.request_body")
      *
      * @param UserDTO $userDTO
      * @param ConstraintViolationListInterface $validationErrors
+     *
+     * @throws BadRequestHttpException
+     *
      * @return View
-     * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      */
     public function signUpAction(UserDTO $userDTO, ConstraintViolationListInterface $validationErrors): View
     {

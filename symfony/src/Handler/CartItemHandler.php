@@ -15,13 +15,19 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class CartItemHandler
 {
-    /** @var EntityManagerInterface */
+    /**
+     * @var EntityManagerInterface
+     */
     private $entityManager;
 
-    /** @var CartItemTransformer */
+    /**
+     * @var CartItemTransformer
+     */
     private $transformer;
 
-    /** @var ProductHandler */
+    /**
+     * @var ProductHandler
+     */
     private $productHandler;
 
     /**
@@ -41,6 +47,7 @@ class CartItemHandler
 
     /**
      * @param BaseEntity|CartItem $cartItem
+     *
      * @return BaseDTO|CartItemDTO
      */
     public function getDto(BaseEntity $cartItem): BaseDTO
@@ -50,6 +57,7 @@ class CartItemHandler
 
     /**
      * @param User $user
+     *
      * @return array
      */
     public function getAll(User $user): array
@@ -65,8 +73,10 @@ class CartItemHandler
     /**
      * @param User $user
      * @param CartItemDTO $productDto
+     *
+     * @throws BadRequestHttpException
+     *
      * @return CartItemDTO
-     * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      */
     public function addToCart(User $user, CartItemDTO $productDto): CartItemDTO
     {
@@ -96,7 +106,7 @@ class CartItemHandler
     /**
      * @param User $user
      * @param CartItemDTO $productDto
-     * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
+     * @throws BadRequestHttpException
      */
     public function removeFromCart(User $user, CartItemDTO $productDto): void
     {
@@ -128,6 +138,7 @@ class CartItemHandler
 
     /**
      * @param CartItem[] $cartItems
+     *
      * @return float
      */
     private function getTotalPrice($cartItems): float
@@ -145,6 +156,7 @@ class CartItemHandler
     /**
      * @param CartItem[] $cartItems
      * @param Product $product
+     *
      * @return CartItem|null
      */
     private function getCardItemByProduct($cartItems, Product $product): ?CartItem

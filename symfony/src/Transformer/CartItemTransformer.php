@@ -18,6 +18,7 @@ class CartItemTransformer extends BaseTransformer
 
     /**
      * @param BaseEntity|CartItem $entity
+     *
      * @return BaseDTO|CartItemDTO
      */
     public function transform(BaseEntity $entity): BaseDTO
@@ -36,6 +37,7 @@ class CartItemTransformer extends BaseTransformer
     /**
      * @param BaseDTO|CartItemDTO $dto
      * @param BaseEntity|CartItem|null $entity
+     *
      * @return BaseEntity|CartItem
      */
     public function reverseTransform(BaseDTO $dto, ?BaseEntity $entity = null): BaseEntity

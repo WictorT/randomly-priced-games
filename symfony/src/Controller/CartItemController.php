@@ -44,6 +44,7 @@ class CartItemController extends Controller
      * @ParamConverter("cartItemDTO", converter="fos_rest.request_body")
      *
      * @param CartItemDTO $cartItemDTO
+     *
      * @return View
      */
     public function addToCartAction(CartItemDTO $cartItemDTO): View
@@ -60,6 +61,7 @@ class CartItemController extends Controller
      * @ParamConverter("cartItemDTO", converter="fos_rest.request_body")
      *
      * @param CartItemDTO $cartItemDTO
+     *
      * @return View
      */
     public function removeFromCartAction(CartItemDTO $cartItemDTO): View

@@ -17,6 +17,7 @@ class Product extends BaseEntity
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
      * @var int
      */
     private $id;
@@ -75,6 +76,7 @@ class Product extends BaseEntity
 
     /**
      * @param string $name
+     *
      * @return Product
      */
     public function setName(string $name): Product

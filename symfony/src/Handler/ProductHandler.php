@@ -18,16 +18,24 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ProductHandler
 {
-    /** @var EntityManagerInterface */
+    /**
+     * @var EntityManagerInterface
+     */
     private $entityManager;
 
-    /** @var ProductTransformer */
+    /**
+     * @var ProductTransformer
+     */
     private $transformer;
 
-    /** @var UrlGeneratorInterface */
+    /**
+     * @var UrlGeneratorInterface
+     */
     private $router;
 
-    /** @var ValidatorInterface */
+    /**
+     * @var ValidatorInterface
+     */
     private $validator;
 
     /**
@@ -50,8 +58,10 @@ class ProductHandler
 
     /**
      * @param int $productId
+     *
+     * @throws NotFoundHttpException
+     *
      * @return Product|null
-     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
     public function getById(int $productId): ?Product
     {
@@ -65,6 +75,7 @@ class ProductHandler
 
     /**
      * @param BaseEntity|Product $product
+     *
      * @return BaseDTO|ProductDTO
      */
     public function getDto(BaseEntity $product): BaseDTO
@@ -75,6 +86,7 @@ class ProductHandler
     /**
      * @param int $page
      * @param int $perPage
+     *
      * @return array
      */
     public function getPaginated(int $page, int $perPage): array
@@ -101,8 +113,10 @@ class ProductHandler
 
     /**
      * @param BaseDTO|ProductDTO $productDto
+     *
+     * @throws BadRequestHttpException
+     *
      * @return BaseEntity|Product
-     * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      */
     public function create(BaseDTO $productDto): BaseEntity
     {
@@ -122,8 +136,10 @@ class ProductHandler
     /**
      * @param BaseEntity $product
      * @param BaseDTO $productDto
+     *
+     * @throws BadRequestHttpException
+     *
      * @return BaseEntity
-     * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      */
     public function update(BaseEntity $product, BaseDTO $productDto): BaseEntity
     {
@@ -142,6 +158,7 @@ class ProductHandler
 
     /**
      * @param BaseEntity|Product $product
+     *
      * @return void
      */
     public function delete(BaseEntity $product): void

@@ -18,7 +18,9 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
  */
 class ProductController extends FOSRestController
 {
-    /** @var ProductHandler $productHandler */
+    /**
+     * @var ProductHandler
+     */
     private $productHandler;
 
     /**
@@ -50,6 +52,7 @@ class ProductController extends FOSRestController
      * )
      *
      * @param ParamFetcherInterface $paramFetcher
+     *
      * @return View
      */
     public function indexAction(ParamFetcherInterface $paramFetcher): View
@@ -66,6 +69,7 @@ class ProductController extends FOSRestController
      * @Rest\Get(path="/products/{id}", name="app.products.get", requirements={"id":"\d+"})
      *
      * @param Product $product
+     *
      * @return View
      */
     public function getAction(Product $product): View
@@ -81,8 +85,10 @@ class ProductController extends FOSRestController
      *
      * @param ProductDTO $productDTO
      * @param ConstraintViolationListInterface $validationErrors
+     *
+     * @throws BadRequestHttpException
+     *
      * @return View
-     * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      */
     public function createAction(ProductDTO $productDTO, ConstraintViolationListInterface $validationErrors): View
     {
@@ -102,14 +108,17 @@ class ProductController extends FOSRestController
      * @param Product $product
      * @param ProductDTO $productDTO
      * @param ConstraintViolationListInterface $validationErrors
+     *
+     * @throws BadRequestHttpException
+     *
      * @return View
-     * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      */
     public function updateAction(
         Product $product,
         ProductDTO $productDTO,
         ConstraintViolationListInterface $validationErrors
     ): View {
+
         if ($validationErrors->count() > 0) {
             throw new BadRequestHttpException($validationErrors);
         }
@@ -123,6 +132,7 @@ class ProductController extends FOSRestController
      * @Rest\Delete(path="/products/{id}", name="app.products.delete", requirements={"id":"\d+"})
      *
      * @param Product $product
+     *
      * @return View
      */
     public function deleteAction(Product $product): View

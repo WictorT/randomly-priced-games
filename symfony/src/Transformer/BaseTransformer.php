@@ -8,6 +8,7 @@ abstract class BaseTransformer
 {
     /**
      * @param BaseEntity $entity
+     *
      * @return BaseDTO
      */
     abstract public function transform(BaseEntity $entity): BaseDTO;
@@ -15,12 +16,14 @@ abstract class BaseTransformer
     /**
      * @param BaseDTO $dto
      * @param BaseEntity|null $entity
+     *
      * @return BaseEntity
      */
     abstract public function reverseTransform(BaseDTO $dto, ?BaseEntity $entity): BaseEntity;
 
     /**
      * @param array|\Iterator $entities
+     *
      * @return array
      */
     public function transformMultiple($entities): array

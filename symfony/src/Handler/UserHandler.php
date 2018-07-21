@@ -10,13 +10,19 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserHandler
 {
-    /** @var EntityManagerInterface */
+    /**
+     * @var EntityManagerInterface
+     */
     private $entityManager;
 
-    /** @var UserBaseTransformer */
+    /**
+     * @var UserBaseTransformer
+     */
     private $transformer;
 
-    /** @var ValidatorInterface */
+    /**
+     * @var ValidatorInterface
+     */
     private $validator;
 
     /**

@@ -89,6 +89,7 @@ class User extends BaseEntity implements UserInterface
 
     /**
      * @param string $username
+     *
      * @return User
      */
     public function setUsername(string $username): User
@@ -107,6 +108,7 @@ class User extends BaseEntity implements UserInterface
 
     /**
      * @param string $email
+     *
      * @return User
      */
     public function setEmail(string $email): User
@@ -125,6 +127,7 @@ class User extends BaseEntity implements UserInterface
 
     /**
      * @param string $password
+     *
      * @return User
      */
     public function setPassword(string $password): User
@@ -151,6 +154,7 @@ class User extends BaseEntity implements UserInterface
 
     /**
      * @param CartItem[]|ArrayCollection $cartItems
+     *
      * @return User
      */
     public function setCartItems($cartItems)
@@ -180,7 +184,7 @@ class User extends BaseEntity implements UserInterface
      */
     public function getRoles()
     {
-        return array('ROLE_USER');
+        return ['ROLE_USER'];
     }
 
     public function eraseCredentials()
