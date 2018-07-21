@@ -1,7 +1,7 @@
 <h1 align="center">
   Randomly priced games
 </h1>
-<p align="center">This is a games store API, which provides basic functionality of products management </p>
+<p align="center">This is a gaming store API, which provides basic functionality for product management </p>
 
 ### Prerequisites
  - **Linux/OS X Windows)**
@@ -34,11 +34,6 @@
 8. (inside php container) Run `sh setup.sh` if it is the first time you launched the project
 
 You can now access the application here (by default): [http://localhost:3000](http://localhost:3000)
-
-### Run Fixtures
-
-1. Enter container: `docker-compose -f docker/development/docker-compose.yml -f docker/testing/docker-compose.yml -p $(basename $(pwd)) exec php bash`
-2. Run: `bin/console doctrine:fixtures:load`
 
 ### Launching tests
 - To launch tests tests run:

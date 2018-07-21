@@ -1,4 +1,5 @@
 sudo: required
+language: php
 
 env:
   DOCKER_COMPOSE_VERSION: 1.8.1

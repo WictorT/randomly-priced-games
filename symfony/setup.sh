@@ -1,9 +1,16 @@
 #!/usr/bin/env bash
 
+environment=$1
+if [ -z "$environment" ]
+  then
+    environment="dev"
+fi
+
 composer install;
 
-bin/console doctrine:migrations:migrate --no-interaction;
-bin/console doctrine:fixtures:load --no-interaction;
+bin/console doctrine:database:create --if-not-exists --env=${environment};
+bin/console doctrine:migrations:migrate --no-interaction --env=${environment};
+bin/console doctrine:fixtures:load --no-interaction --env=${environment};
 
 HTTPDUSER=`ps aux | grep -E '[a]pache|[h]ttpd|[_]www|[w]ww-data|[n]ginx' | grep -v root | head -1 | cut -d\  -f1`
 setfacl -R -m u:"$HTTPDUSER":rwX -m u:`whoami`:rwX var/cache var/log config/jwt/
