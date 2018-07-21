@@ -21,6 +21,11 @@
         <env name="JWT_PUBLIC_KEY" value="%kernel.project_dir%/config/jwt/public.pem"/>
         <env name="JWT_PASSPHRASE" value="56042e589801e76353c1fab7c9220579"/>
         <!-- ###- lexik/jwt-authentication-bundle ### -->
+
+        <!-- ###+ snc/redis-bundle ### -->
+        <!-- passwords that contain special characters (@, %, :, +) must be urlencoded -->
+        <env name="REDIS_URL" value="redis://localhost"/>
+        <!-- ###- snc/redis-bundle ### -->
     </php>
 
     <testsuites>

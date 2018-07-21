@@ -29,3 +29,11 @@ services:
             - php
         volumes:
             - ./logs/nginx/:/var/log/nginx
+    redis:
+        image: redis:4.0.10
+#        TODO remove external port
+        ports:
+            - 6379:6379
+        volumes:
+            - ../data/redis:/data
+        restart: always

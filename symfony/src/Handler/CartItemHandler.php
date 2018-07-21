@@ -11,6 +11,7 @@ use App\Repository\BaseRepository;
 use App\Repository\ProductRepository;
 use App\Transformer\CartItemTransformer;
 use Doctrine\ORM\EntityManagerInterface;
+use Predis\Client;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class CartItemHandler
@@ -31,18 +32,26 @@ class CartItemHandler
     private $productHandler;
 
     /**
+     * @var Client
+     */
+    private $cache;
+
+    /**
      * @param EntityManagerInterface $entityManager
      * @param CartItemTransformer $transformer
      * @param ProductHandler $productHandler
+     * @param Client $cache
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         CartItemTransformer $transformer,
-        ProductHandler $productHandler
+        ProductHandler $productHandler,
+        Client $cache
     ) {
         $this->entityManager = $entityManager;
         $this->transformer = $transformer;
         $this->productHandler = $productHandler;
+        $this->cache = $cache;
     }
 
     /**
@@ -66,7 +75,7 @@ class CartItemHandler
 
         return [
             'items' => $this->transformer->transformMultiple($cartItems),
-            'total_price' => $this->getTotalPrice($cartItems),
+            'total_price' => $this->getTotalCartPriceByUser($user),
         ];
     }
 
@@ -100,6 +109,7 @@ class CartItemHandler
         }
 
         $this->entityManager->flush();
+        $this->cache->del([$this->getTotalPriceCacheKeyForUser($user)]);
 
         return $this->getDto($cartItem);
     }
@@ -129,6 +139,7 @@ class CartItemHandler
         }
 
         $this->entityManager->flush();
+        $this->cache->del([$this->getTotalPriceCacheKeyForUser($user)]);
     }
 
     /**
@@ -140,18 +151,25 @@ class CartItemHandler
     }
 
     /**
-     * @param CartItem[] $cartItems
+     * @param User $user
      *
      * @return float
      */
-    private function getTotalPrice($cartItems): float
+    private function getTotalCartPriceByUser(User $user): float
     {
-        // TODO cache result with redis
+        $cachedValue = $this->cache->get($this->getTotalPriceCacheKeyForUser($user));
+        if ($cachedValue) {
+            return $cachedValue;
+        }
+
+        $cartItems = $user->getCartItems();
         $totalPrice = 0.0;
 
         foreach ($cartItems as $cartItem) {
             $totalPrice += $cartItem->getProduct()->getPrice() * $cartItem->getCount();
         }
+
+        $this->cache->set($this->getTotalPriceCacheKeyForUser($user), $totalPrice);
 
         return $totalPrice;
     }
@@ -171,5 +189,15 @@ class CartItemHandler
         }
 
         return null;
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return string
+     */
+    private function getTotalPriceCacheKeyForUser(User $user): string
+    {
+        return 'total_cart_price_for_user_' . $user->getId();
     }
 }

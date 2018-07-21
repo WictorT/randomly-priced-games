@@ -35,6 +35,9 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
 
+    Predis\Client:
+        alias: snc_redis.default
+
 #    base.handler:
 #        class: App\Handler\BaseHandler
 #        calls:
