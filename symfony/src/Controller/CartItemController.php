@@ -53,7 +53,7 @@ class CartItemController extends Controller
 
         $cartItem = $this->cartItemHandler->addToCart($user, $cartItemDTO);
 
-        return View::create($cartItem, Response::HTTP_OK);
+        return View::create($cartItem, Response::HTTP_CREATED);
     }
 
     /**

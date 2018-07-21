@@ -83,8 +83,9 @@ class CartItemHandler
         $product = $this->productHandler->getById($productDto->productId);
 
         $cartItems = $user->getCartItems();
+        $cartItem = $this->getCardItemByProduct($cartItems, $product);
 
-        if ($cartItem = $this->getCardItemByProduct($cartItems, $product)) {
+        if ($cartItem) {
             $newCount = min(CartItem::MAX_PRODUCTS_PER_ITEM, $cartItem->getCount() + 1);
             $cartItem->setCount($newCount);
         } elseif ($cartItems->count() < CartItem::MAX_ITEMS) {
@@ -106,14 +107,16 @@ class CartItemHandler
     /**
      * @param User $user
      * @param CartItemDTO $productDto
+     *
      * @throws BadRequestHttpException
      */
     public function removeFromCart(User $user, CartItemDTO $productDto): void
     {
         $product = $this->productHandler->getById($productDto->productId);
         $cartItems = $user->getCartItems();
+        $cartItem = $this->getCardItemByProduct($cartItems, $product);
 
-        if ($cartItem = $this->getCardItemByProduct($cartItems, $product)) {
+        if ($cartItem) {
             $newCount = $cartItem->getCount() - 1;
 
             if ($newCount === 0) {
