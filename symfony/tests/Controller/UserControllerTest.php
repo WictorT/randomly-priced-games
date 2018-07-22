@@ -21,7 +21,7 @@ class UserControllerTest extends ApiTestCase
         $this->encoder = static::$container->get('security.password_encoder');
     }
 
-    public function testSignUpActionSuccess()
+    public function testSignUpActionSucceeds()
     {
         // remove users with email=user@mail.com or username=user to avoid conflict
         $userRepository = $this->entityManager->getRepository(User::class);
@@ -36,9 +36,7 @@ class UserControllerTest extends ApiTestCase
             $this->router->generate('app.users.sign_up'),
             [],
             [],
-            [
-                'CONTENT_TYPE' => 'application/json'
-            ],
+            [],
             json_encode([
                 'username' => 'user',
                 'email' => 'user@mail.com',
@@ -75,7 +73,7 @@ class UserControllerTest extends ApiTestCase
         );
     }
 
-    public function testSignUpActionFails()
+    public function testSignUpActionReturnBadRequest()
     {
         // remove users with email=user@mail.com or username=user
         $userRepository = $this->entityManager->getRepository(User::class);

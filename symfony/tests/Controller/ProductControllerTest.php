@@ -124,6 +124,77 @@ class ProductControllerTest extends ApiTestCase
         $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
     }
 
+    public function testCreateActionSucceeds()
+    {
+        // remove product with name=user@mail.com or username=user to avoid conflict
+        $product = $this->entityManager->getRepository(Product::class)->findOneBy(['name' => 'Cyberpunk 2077']);
+        $product && $this->entityManager->remove($product);
+        $this->entityManager->flush();
+
+        $this->authorizedClient->request(
+            'POST',
+            $this->router->generate('app.products.create'),
+            [],
+            [],
+            [],
+            json_encode([
+                'name' => 'Cyberpunk 2077',
+                'price' => '59.99',
+            ])
+        );
+
+        $response = $this->authorizedClient->getResponse();
+        $responseContent = json_decode($response->getContent());
+        $product = $this->entityManager->getRepository(Product::class)->findOneBy(['name' => 'Cyberpunk 2077']);
+
+        $this->assertEquals(
+            [
+                'status_code' => Response::HTTP_CREATED,
+                'content' => [
+                    'id' => $product->getId(),
+                    'name' => $product->getName(),
+                    'price' => $product->getPrice(),
+                    'created_at' => $product->getCreatedAt()->format(\DateTime::ATOM),
+                    'updated_at' => $product->getUpdatedAt()->format(\DateTime::ATOM),
+                ]
+            ],
+            [
+                'status_code' => $response->getStatusCode(),
+                'content' => [
+                    'id' => $responseContent->id,
+                    'name' => $responseContent->name,
+                    'price' => $responseContent->price,
+                    'created_at' => $responseContent->created_at,
+                    'updated_at' => $responseContent->updated_at,
+                ]
+            ]
+        );
+    }
+
+    public function testCreateActionReturnsBadRequest()
+    {
+        $this->authorizedClient->request(
+            'POST',
+            $this->router->generate('app.products.create')
+        );
+
+        $response = $this->authorizedClient->getResponse();
+
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+    }
+
+    public function testCreateActionReturnsUnauthorized()
+    {
+        $this->unauthorizedClient->request(
+            'POST',
+            $this->router->generate('app.products.create')
+        );
+
+        $response = $this->unauthorizedClient->getResponse();
+
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
     public function testDeleteActionSucceeds()
     {
         $product = $this->entityManager->getRepository(Product::class)->findOneBy(['name' => 'Cyberpunk 2077']);
