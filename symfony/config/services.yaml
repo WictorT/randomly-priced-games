@@ -38,7 +38,3 @@ services:
     Predis\Client:
         alias: snc_redis.default
 
-#    base.handler:
-#        class: App\Handler\BaseHandler
-#        calls:
-#            - [setRouter, ['@router']]
