@@ -41,6 +41,8 @@ class CartItemControllerTest extends ApiTestCase
         $this->cartItemHelper->addCartItem($this->productHelper->createProduct('Gwent', 0.0), 9);
         $this->cartItemHelper->addCartItem($this->productHelper->createProduct('Witcher 3', 49.99), 3);
 
+        $this->performRequest(Request::METHOD_GET, 'app.cart-items.list');
+        // called twice to cover the case when total_price comes from redis
         $response = $this->performRequest(Request::METHOD_GET, 'app.cart-items.list');
         $responseContent = json_decode($response->getContent());
 

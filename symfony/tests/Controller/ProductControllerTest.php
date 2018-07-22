@@ -23,7 +23,7 @@ class ProductControllerTest extends ApiTestCase
         $this->productHelper->createProduct();
     }
 
-    public function testIndexActionSuccess()
+    public function testIndexActionSucceeds()
     {
         $response = $this->performRequest('GET', 'app.products.list', [], [], false);
         $responseContent = json_decode($response->getContent());
