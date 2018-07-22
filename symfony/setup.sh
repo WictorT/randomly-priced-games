@@ -11,7 +11,6 @@ composer install;
 bin/console doctrine:database:create --if-not-exists --env=${environment};
 bin/console doctrine:migrations:migrate --no-interaction --env=${environment};
 bin/console doctrine:fixtures:load --no-interaction --env=${environment};
-bin/console bin/console cache:clear --env=${environment};
 
 HTTPDUSER=`ps aux | grep -E '[a]pache|[h]ttpd|[_]www|[w]ww-data|[n]ginx' | grep -v root | head -1 | cut -d\  -f1`
 setfacl -R -m u:"$HTTPDUSER":rwX -m u:`whoami`:rwX var/cache var/log config/jwt/
@@ -19,4 +18,4 @@ setfacl -dR -m u:"$HTTPDUSER":rwX -m u:`whoami`:rwX var/cache var/log config/jwt
 
 cp phpunit.xml.dist phpunit.xml
 
-bin/console bin/console cache:clear --env=${environment};
+bin/console cache:clear --env=${environment};
