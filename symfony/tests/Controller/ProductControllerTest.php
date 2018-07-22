@@ -4,20 +4,23 @@ namespace App\Tests\Controller;
 
 use App\Entity\Product;
 use App\Tests\ApiTestCase;
+use App\Tests\Helper\ProductHelper;
 use Symfony\Component\HttpFoundation\Response;
 
 class ProductControllerTest extends ApiTestCase
 {
-    const DEFAULT_PER_PAGE = 3;
-    const DEFAULT_PAGE = 1;
-    const TEST_PRODUCT_PRICE = 59.99;
-    const TEST_PRODUCT_NAME = 'Cyberpunk 2077';
+    /**
+     * @var ProductHelper $productHelper
+     */
+    private $productHelper;
 
     protected function setUp()
     {
         parent::setUp();
 
-        $this->createProduct();
+        $this->productHelper = new ProductHelper($this->entityManager);
+
+        $this->productHelper->createProduct();
     }
 
     public function testIndexActionSuccess()
@@ -27,15 +30,16 @@ class ProductControllerTest extends ApiTestCase
 
         $products = $this->entityManager->getRepository(Product::class)->findAll();
         $productsCount = count($products);
-        $pagesCount = (int)($productsCount / self::DEFAULT_PER_PAGE) + (bool)($productsCount % self::DEFAULT_PER_PAGE);
-        $pageCount = min(self::DEFAULT_PER_PAGE, $productsCount);
+        $pagesCount = (int)($productsCount / ProductHelper::DEFAULT_PER_PAGE) +
+            (bool)($productsCount % ProductHelper::DEFAULT_PER_PAGE);
+        $pageCount = min(ProductHelper::DEFAULT_PER_PAGE, $productsCount);
 
         $this->assertEquals(
             [
                 'status_code' => Response::HTTP_OK,
                 'content' => [
-                    'page' => self::DEFAULT_PAGE,
-                    'per_page' => self::DEFAULT_PER_PAGE,
+                    'page' => ProductHelper::DEFAULT_PAGE,
+                    'per_page' => ProductHelper::DEFAULT_PER_PAGE,
                     'page_count' => $pageCount,
                     'total_pages' => $pagesCount,
                     'total_count' => $productsCount,
@@ -70,7 +74,7 @@ class ProductControllerTest extends ApiTestCase
 
     public function testGetActionSuccess()
     {
-        $product = $this->createProduct();
+        $product = $this->productHelper->createProduct();
 
         $response = $this->performRequest('GET', 'app.products.get', ['id' => $product->getId()], [], false);
         $responseContent = json_decode($response->getContent());
@@ -101,7 +105,7 @@ class ProductControllerTest extends ApiTestCase
 
     public function testGetActionReturnsNotFound()
     {
-        $this->removeProduct(['id' => 2077]);
+        $this->productHelper->removeProduct(['id' => 2077]);
 
         $response = $this->performRequest('GET', 'app.products.get', ['id' => 2077], [], false);
 
@@ -110,27 +114,29 @@ class ProductControllerTest extends ApiTestCase
 
     public function testCreateActionSucceeds()
     {
-        $this->removeProduct();
+        $this->productHelper->removeProduct();
 
         $response = $this->performRequest(
             'POST',
             'app.products.create',
             [],
             [
-                'name' => self::TEST_PRODUCT_NAME,
-                'price' => self::TEST_PRODUCT_PRICE,
+                'name' => ProductHelper::TEST_PRODUCT_NAME,
+                'price' => ProductHelper::TEST_PRODUCT_PRICE,
             ]
         );
         $responseContent = json_decode($response->getContent());
-        $product = $this->entityManager->getRepository(Product::class)->findOneBy(['name' => self::TEST_PRODUCT_NAME]);
+        $product = $this->entityManager->getRepository(Product::class)->findOneBy([
+            'name' => ProductHelper::TEST_PRODUCT_NAME
+        ]);
 
         $this->assertEquals(
             [
                 'status_code' => Response::HTTP_CREATED,
                 'content' => [
                     'id' => $product->getId(),
-                    'name' => self::TEST_PRODUCT_NAME,
-                    'price' => self::TEST_PRODUCT_PRICE,
+                    'name' => ProductHelper::TEST_PRODUCT_NAME,
+                    'price' => ProductHelper::TEST_PRODUCT_PRICE,
                     'created_at' => $product->getCreatedAt()->format(\DateTime::ATOM),
                     'updated_at' => $product->getUpdatedAt()->format(\DateTime::ATOM),
                 ]
@@ -171,36 +177,36 @@ class ProductControllerTest extends ApiTestCase
             ],
             'case 2: no name' => [
                 'data' => [
-                    'price' => self::TEST_PRODUCT_PRICE,
+                    'price' => ProductHelper::TEST_PRODUCT_PRICE,
                 ],
             ],
             'case 3: no price' => [
                 'data' => [
-                    'name' => self::TEST_PRODUCT_NAME,
+                    'name' => ProductHelper::TEST_PRODUCT_NAME,
                 ],
             ],
             'case 4: negative price' => [
                 'data' => [
-                    'name' => self::TEST_PRODUCT_NAME,
-                    'price' => - self::TEST_PRODUCT_PRICE,
+                    'name' => ProductHelper::TEST_PRODUCT_NAME,
+                    'price' => - ProductHelper::TEST_PRODUCT_PRICE,
                 ]
             ],
             'case 5: duplication' => [
                 'data' => [
-                    'name' => self::TEST_PRODUCT_NAME,
-                    'price' => self::TEST_PRODUCT_PRICE,
+                    'name' => ProductHelper::TEST_PRODUCT_NAME,
+                    'price' => ProductHelper::TEST_PRODUCT_PRICE,
                 ]
             ],
             'case 6: too long name' => [
                 'data' => [
-                    'name' => '12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890',
-                    'price' => self::TEST_PRODUCT_PRICE,
+                    'name' => str_repeat('n', 255),
+                    'price' => ProductHelper::TEST_PRODUCT_PRICE,
                 ]
             ],
             'case 7: invalid price type' => [
                 'data' => [
-                    'name' => self::TEST_PRODUCT_NAME,
-                    'price' => self::TEST_PRODUCT_NAME,
+                    'name' => ProductHelper::TEST_PRODUCT_NAME,
+                    'price' => ProductHelper::TEST_PRODUCT_NAME,
                 ]
             ],
         ];
@@ -215,14 +221,9 @@ class ProductControllerTest extends ApiTestCase
 
     public function testUpdateActionSucceeds()
     {
-        $this->removeProduct(['name' => 'faulty string']);
-        $this->removeProduct();
-
-        $product = (new Product)
-            ->setName('faulty string')
-            ->setPrice(5559.995);
-        $this->entityManager->persist($product);
-        $this->entityManager->flush();
+        $this->productHelper->removeProduct(['name' => 'faulty string']);
+        $this->productHelper->removeProduct();
+        $product = $this->productHelper->createProduct('faulty string', 5559.995);
 
         $response = $this->performRequest(
             'PUT',
@@ -231,8 +232,8 @@ class ProductControllerTest extends ApiTestCase
                 'id' => $product->getId()
             ],
             [
-                'name' => self::TEST_PRODUCT_NAME,
-                'price' => self::TEST_PRODUCT_PRICE,
+                'name' => ProductHelper::TEST_PRODUCT_NAME,
+                'price' => ProductHelper::TEST_PRODUCT_PRICE,
             ]
         );
 
@@ -243,10 +244,10 @@ class ProductControllerTest extends ApiTestCase
                 'status_code' => Response::HTTP_OK,
                 'content' => [
                     'id' => $product->getId(),
-                    'name' => self::TEST_PRODUCT_NAME,
-                    'price' => self::TEST_PRODUCT_PRICE,
-                    'created_at' => $product->getCreatedAt()->format(\DateTime::ATOM),
-                    'updated_at' => $product->getUpdatedAt()->format(\DateTime::ATOM),
+                    'name' => ProductHelper::TEST_PRODUCT_NAME,
+                    'price' => ProductHelper::TEST_PRODUCT_PRICE,
+                    'created_at' => 'exists',
+                    'updated_at' => 'exists',
                 ]
             ],
             [
@@ -255,8 +256,8 @@ class ProductControllerTest extends ApiTestCase
                     'id' => $responseContent->id,
                     'name' => $responseContent->name,
                     'price' => $responseContent->price,
-                    'created_at' => $responseContent->created_at,
-                    'updated_at' => $responseContent->updated_at,
+                    'created_at' => $responseContent->created_at ? 'exists' : 'is missing',
+                    'updated_at' => $responseContent->updated_at ? 'exists' : 'is missing',
                 ]
             ]
         );
@@ -264,7 +265,7 @@ class ProductControllerTest extends ApiTestCase
 
     public function testUpdateActionReturnsNotFound()
     {
-        $this->removeProduct(['id' => 2077]);
+        $this->productHelper->removeProduct(['id' => 2077]);
 
         $response = $this->performRequest(
             'PUT',
@@ -273,8 +274,8 @@ class ProductControllerTest extends ApiTestCase
                 'id' => 2077
             ],
             [
-                'name' => self::TEST_PRODUCT_NAME,
-                'price' => self::TEST_PRODUCT_PRICE,
+                'name' => ProductHelper::TEST_PRODUCT_NAME,
+                'price' => ProductHelper::TEST_PRODUCT_PRICE,
             ]
         );
 
@@ -287,7 +288,7 @@ class ProductControllerTest extends ApiTestCase
      */
     public function testUpdateActionReturnsBadRequest(array $data)
     {
-        $product = $this->createProduct('faulty name', '99999');
+        $product = $this->productHelper->createProduct('faulty name', '99999');
 
         $response = $this->performRequest('PUT', 'app.products.update', ['id' => $product->getId()], $data);
 
@@ -305,30 +306,30 @@ class ProductControllerTest extends ApiTestCase
             ],
             'case 2: no name' => [
                 'data' => [
-                    'price' => self::TEST_PRODUCT_PRICE,
+                    'price' => ProductHelper::TEST_PRODUCT_PRICE,
                 ],
             ],
             'case 3: no price' => [
                 'data' => [
-                    'name' => self::TEST_PRODUCT_NAME,
+                    'name' => ProductHelper::TEST_PRODUCT_NAME,
                 ],
             ],
             'case 4: negative price' => [
                 'data' => [
-                    'name' => self::TEST_PRODUCT_NAME,
-                    'price' => - self::TEST_PRODUCT_PRICE,
+                    'name' => ProductHelper::TEST_PRODUCT_NAME,
+                    'price' => - ProductHelper::TEST_PRODUCT_PRICE,
                 ]
             ],
             'case 5: duplication' => [
                 'data' => [
-                    'name' => self::TEST_PRODUCT_NAME,
-                    'price' => self::TEST_PRODUCT_PRICE,
+                    'name' => ProductHelper::TEST_PRODUCT_NAME,
+                    'price' => ProductHelper::TEST_PRODUCT_PRICE,
                 ]
             ],
             'case 6: too long name' => [
                 'data' => [
                     'name' => str_repeat('n', 256),
-                    'price' => self::TEST_PRODUCT_PRICE,
+                    'price' => ProductHelper::TEST_PRODUCT_PRICE,
                 ]
             ],
         ];
@@ -343,7 +344,7 @@ class ProductControllerTest extends ApiTestCase
 
     public function testDeleteActionSucceeds()
     {
-        $product = $this->createProduct();
+        $product = $this->productHelper->createProduct();
 
         $response =  $this->performRequest('DELETE', 'app.products.delete', ['id' => $product->getId()]);
 
@@ -361,7 +362,7 @@ class ProductControllerTest extends ApiTestCase
 
     public function testDeleteActionReturnsNotFound()
     {
-        $this->removeProduct(['id' => 2077]);
+        $this->productHelper->removeProduct(['id' => 2077]);
 
         $response = $this->performRequest('DELETE', 'app.products.delete', ['id' => 2077]);
 
@@ -373,40 +374,5 @@ class ProductControllerTest extends ApiTestCase
         $response = $this->performRequest('DELETE', 'app.products.delete', ['id' => 2077], [], false);
 
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
-    }
-
-    /**
-     * @param string $name
-     * @param float $price
-     * @return Product|null|object
-     */
-    private function createProduct($name = self::TEST_PRODUCT_NAME, $price = self::TEST_PRODUCT_PRICE): Product
-    {
-        $product = $this->entityManager->getRepository(Product::class)->findOneBy(['name' => $name]);
-
-        if ($product) {
-            $product->setPrice($price);
-            $this->entityManager->merge($product);
-        } else {
-            $product = (new Product)
-                ->setName($name)
-                ->setPrice($price);
-            $this->entityManager->persist($product);
-        }
-        $this->entityManager->flush();
-
-        return $product;
-    }
-
-    /**
-     * @param array $findParams
-     * @return void
-     */
-    private function removeProduct(array $findParams = ['name' => self::TEST_PRODUCT_NAME])
-    {
-        $product = $this->entityManager->getRepository(Product::class)->findOneBy($findParams);
-        $product && $this->entityManager->remove($product);
-
-        $this->entityManager->flush();
     }
 }

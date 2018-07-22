@@ -26,7 +26,7 @@
         <!-- ###- lexik/jwt-authentication-bundle ### -->
 
         <!-- ###+ snc/redis-bundle ### -->
-        <env name="REDIS_URL" value="redis://localhost"/>
+        <env name="REDIS_URL" value="redis://redis"/>
         <!-- ###- snc/redis-bundle ### -->
     </php>
 
