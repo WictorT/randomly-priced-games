@@ -152,8 +152,8 @@ class ProductControllerTest extends ApiTestCase
                 'status_code' => Response::HTTP_CREATED,
                 'content' => [
                     'id' => $product->getId(),
-                    'name' => $product->getName(),
-                    'price' => $product->getPrice(),
+                    'name' => 'Cyberpunk 2077',
+                    'price' => '59.99',
                     'created_at' => $product->getCreatedAt()->format(\DateTime::ATOM),
                     'updated_at' => $product->getUpdatedAt()->format(\DateTime::ATOM),
                 ]
@@ -171,16 +171,27 @@ class ProductControllerTest extends ApiTestCase
         );
     }
 
-    public function testCreateActionReturnsBadRequest()
+    /**
+     * @dataProvider dataTestCreateActionReturnsBadRequest
+     * @param array $data
+     */
+    public function testCreateActionReturnsBadRequest(array $data)
     {
-        $this->authorizedClient->request(
-            'POST',
-            $this->router->generate('app.products.create')
-        );
-
-        $response = $this->authorizedClient->getResponse();
+        $response = $this->performRequest('POST', 'app.products.create', [], $data);
 
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+    }
+
+    /**
+     * @return array
+     */
+    public function dataTestCreateActionReturnsBadRequest() : array
+    {
+        return [
+            'case 1: no parameters' => [
+                'data' => [],
+            ],
+        ];
     }
 
     public function testCreateActionReturnsUnauthorized()
