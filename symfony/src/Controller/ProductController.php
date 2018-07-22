@@ -102,7 +102,7 @@ class ProductController extends FOSRestController
     }
 
     /**
-     * @Rest\Patch(path="/products/{id}", name="app.products.update", requirements={"id":"\d+"})
+     * @Rest\Put(path="/products/{id}", name="app.products.update", requirements={"id":"\d+"})
      * @ParamConverter("productDTO", converter="fos_rest.request_body")
      *
      * @param Product $product

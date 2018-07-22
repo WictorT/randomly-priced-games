@@ -225,7 +225,7 @@ class ProductControllerTest extends ApiTestCase
         $this->entityManager->flush();
 
         $response = $this->performRequest(
-            'PATCH',
+            'PUT',
             'app.products.update',
             [
                 'id' => $product->getId()
@@ -267,7 +267,7 @@ class ProductControllerTest extends ApiTestCase
         $this->removeProduct(['id' => 2077]);
 
         $response = $this->performRequest(
-            'PATCH',
+            'PUT',
             'app.products.update',
             [
                 'id' => 2077
@@ -289,7 +289,7 @@ class ProductControllerTest extends ApiTestCase
     {
         $product = $this->createProduct('faulty name', '99999');
 
-        $response = $this->performRequest('PATCH', 'app.products.update', ['id' => $product->getId()], $data);
+        $response = $this->performRequest('PUT', 'app.products.update', ['id' => $product->getId()], $data);
 
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
@@ -337,7 +337,7 @@ class ProductControllerTest extends ApiTestCase
 
     public function testUpdateActionReturnsUnauthorized()
     {
-        $response = $this->performRequest('PATCH', 'app.products.update', ['id' => 2077], [], false);
+        $response = $this->performRequest('PUT', 'app.products.update', ['id' => 2077], [], false);
 
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
