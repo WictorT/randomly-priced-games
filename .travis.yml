@@ -16,7 +16,23 @@ before_install:
   - cp .env.dist .env
   - cat docker-compose.yml
 
-script:
+install:
   - docker-compose build
   - docker-compose up -d
   - docker-compose ps
+  - docker-compose exec bin/console doctrine:database:create --if-not-exists --env=prod;
+  - docker-compose exec bin/console doctrine:migrations:migrate --no-interaction --env=prod;
+  - docker-compose exec HTTPDUSER=`ps aux | grep -E '[a]pache|[h]ttpd|[_]www|[w]ww-data|[n]ginx' | grep -v root | head -1 | cut -d\  -f1`
+  - docker-compose exec setfacl -R -m u:"$HTTPDUSER":rwX -m u:`whoami`:rwX var/cache var/log config/jwt/
+  - docker-compose exec setfacl -dR -m u:"$HTTPDUSER":rwX -m u:`whoami`:rwX var/cache var/log config/jwt/
+
+script:
+  - docker-compose exec php ./bin/phpunit
+  # this checks that the YAML config files contain no syntax errors
+  - docker-compose exec php ./bin/console lint:yaml config
+  # this checks that the application doesn't use dependencies with known security vulnerabilities
+  - docker-compose exec php ./bin/console security:check
+  # this checks that the composer.json and composer.lock files are valid
+  - docker-compose exec php composer validate --strict
+  # this checks that Doctrine's mapping configurations are valid
+  - docker-compose exec php ./bin/console doctrine:schema:validate --skip-sync -vvv --no-interaction
