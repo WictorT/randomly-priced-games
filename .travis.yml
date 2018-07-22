@@ -20,6 +20,7 @@ install:
   - docker-compose build
   - docker-compose up -d
   - docker-compose ps
+  - docker-compose exec php composer install;
   - docker-compose exec php bin/console doctrine:database:create --if-not-exists --env=prod;
   - docker-compose exec php bin/console doctrine:migrations:migrate --no-interaction --env=prod;
   - docker-compose exec php HTTPDUSER=`ps aux | grep -E '[a]pache|[h]ttpd|[_]www|[w]ww-data|[n]ginx' | grep -v root | head -1 | cut -d\  -f1`
