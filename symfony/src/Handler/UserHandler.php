@@ -7,7 +7,6 @@ use App\Repository\BaseRepository;
 use App\Repository\UserRepository;
 use App\Transformer\UserBaseTransformer;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserHandler extends BaseHandler
@@ -51,9 +50,7 @@ class UserHandler extends BaseHandler
         $user = $this->transformer->reverseTransform($userDTO);
 
         $validationErrors = $this->validator->validate($user);
-        if ($validationErrors->count() > 0) {
-            throw new BadRequestHttpException($validationErrors);
-        }
+        $this->handleValidationErrors($validationErrors);
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();

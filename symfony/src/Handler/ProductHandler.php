@@ -123,9 +123,7 @@ class ProductHandler extends BaseHandler
         $product = $this->transformer->reverseTransform($productDto);
 
         $validationErrors = $this->validator->validate($product);
-        if ($validationErrors->count() > 0) {
-            throw new BadRequestHttpException($validationErrors);
-        }
+        $this->handleValidationErrors($validationErrors);
 
         $this->entityManager->persist($product);
         $this->entityManager->flush();
