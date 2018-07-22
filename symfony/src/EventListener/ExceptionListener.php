@@ -5,6 +5,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class ExceptionListener
@@ -28,19 +29,7 @@ class ExceptionListener
     public function onKernelException(GetResponseForExceptionEvent $event): void
     {
         $exception = $event->getException();
-
-        $message = [
-            'message' => 'Oops... an expected feature occurred',
-            'error' => [
-                'code' => $exception->getCode(),
-                'message' => $exception->getMessage(),
-            ]
-        ];
-
-        $json = $this->serializer->serialize($message, 'json', array_merge(array(
-            'json_encode_options' => JsonResponse::DEFAULT_ENCODING_OPTIONS,
-        )));
-
+        $json = $this->getResponseJson($exception);
         $response = new JsonResponse($json, 200, [], true);
 
         if ($exception instanceof HttpExceptionInterface) {
@@ -53,5 +42,50 @@ class ExceptionListener
         }
 
         $event->setResponse($response);
+    }
+
+    /**
+     * @param \Exception $exception
+     * @return string
+     */
+    private function getErrorMessage(\Exception $exception): string
+    {
+        if ($exception instanceof NotFoundHttpException) {
+            return 'Entity not found';
+        } else {
+            return $exception->getMessage();
+        }
+    }
+
+    /**
+     * @param \Exception $exception
+     * @return int
+     */
+    private function getResponseCode(\Exception $exception): int
+    {
+        if ($exception instanceof HttpExceptionInterface) {
+            return $exception->getStatusCode();
+        } else {
+            return Response::HTTP_INTERNAL_SERVER_ERROR;
+        }
+    }
+
+    /**
+     * @param \Exception $exception
+     * @return string
+     */
+    private function getResponseJson(\Exception $exception): string
+    {
+        $message = [
+            'message' => 'Oops... an expected feature occurred',
+            'error' => [
+                'code' => $this->getResponseCode($exception),
+                'message' => $this->getErrorMessage($exception),
+            ]
+        ];
+
+        return $this->serializer->serialize($message, 'json', array_merge(array(
+            'json_encode_options' => JsonResponse::DEFAULT_ENCODING_OPTIONS,
+        )));
     }
 }

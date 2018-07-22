@@ -92,9 +92,7 @@ class ProductController extends FOSRestController
      */
     public function createAction(ProductDTO $productDTO, ConstraintViolationListInterface $validationErrors): View
     {
-        if ($validationErrors->count() > 0) {
-            throw new BadRequestHttpException($validationErrors);
-        }
+        $this->productHandler->handleValidationErrors($validationErrors);
 
         $product = $this->productHandler->create($productDTO);
 
@@ -118,10 +116,7 @@ class ProductController extends FOSRestController
         ProductDTO $productDTO,
         ConstraintViolationListInterface $validationErrors
     ): View {
-
-        if ($validationErrors->count() > 0) {
-            throw new BadRequestHttpException($validationErrors);
-        }
+        $this->productHandler->handleValidationErrors($validationErrors);
 
         $this->productHandler->update($product, $productDTO);
 

@@ -3,12 +3,14 @@ namespace App\Handler;
 
 use App\DTO\UserDTO;
 use App\Entity\User;
+use App\Repository\BaseRepository;
+use App\Repository\UserRepository;
 use App\Transformer\UserBaseTransformer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class UserHandler
+class UserHandler extends BaseHandler
 {
     /**
      * @var EntityManagerInterface
@@ -57,5 +59,13 @@ class UserHandler
         $this->entityManager->flush();
 
         return $user;
+    }
+
+    /**
+     * @return UserRepository
+     */
+    public function getRepository(): BaseRepository
+    {
+        return $this->entityManager->getRepository(User::class);
     }
 }

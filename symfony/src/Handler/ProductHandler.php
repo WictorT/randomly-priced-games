@@ -16,7 +16,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class ProductHandler
+class ProductHandler extends BaseHandler
 {
     /**
      * @var EntityManagerInterface
@@ -67,7 +67,7 @@ class ProductHandler
     {
         $product = $this->getRepository()->find($productId);
         if ($product === null) {
-            throw new NotFoundHttpException('Product with this id does not exist');
+            throw new NotFoundHttpException();
         }
 
         return $product;
@@ -146,9 +146,7 @@ class ProductHandler
         $product = $this->transformer->reverseTransform($productDto, $product);
 
         $validationErrors = $this->validator->validate($product);
-        if ($validationErrors->count() > 0) {
-            throw new BadRequestHttpException($validationErrors);
-        }
+        $this->handleValidationErrors($validationErrors);
 
         $this->entityManager->merge($product);
         $this->entityManager->flush();
@@ -168,7 +166,7 @@ class ProductHandler
     }
 
     /**
-     * @return BaseEntity|ProductRepository
+     * @return ProductRepository
      */
     public function getRepository(): BaseRepository
     {

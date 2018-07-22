@@ -42,9 +42,7 @@ class UserController extends Controller
      */
     public function signUpAction(UserDTO $userDTO, ConstraintViolationListInterface $validationErrors): View
     {
-        if ($validationErrors->count() > 0) {
-            throw new BadRequestHttpException($validationErrors);
-        }
+        $this->userHandler->handleValidationErrors($validationErrors);
 
         $user = $this->userHandler->create($userDTO);
 

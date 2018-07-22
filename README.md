@@ -40,7 +40,7 @@ You can now access the application here (by default): [http://localhost:3000](ht
 ```
 docker-compose exec php ./bin/phpunit
 ```
-- To launch tests with code coverage and logging you can use the command:
+- To launch tests with code coverage you can use:
 ```
 docker-compose exec php ./bin/phpunit --coverage-html coverage
 ```
