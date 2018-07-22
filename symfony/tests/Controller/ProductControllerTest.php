@@ -13,12 +13,7 @@ class ProductControllerTest extends ApiTestCase
 
     public function testIndexActionSuccess()
     {
-        $this->unauthorizedClient->request(
-            'GET',
-            $this->router->generate('app.products.list')
-        );
-
-        $response = $this->unauthorizedClient->getResponse();
+        $response = $this->performRequest('GET', 'app.products.list', [], [], false);
         $responseContent = json_decode($response->getContent());
 
         $products = $this->entityManager->getRepository(Product::class)->findAll();
@@ -75,12 +70,7 @@ class ProductControllerTest extends ApiTestCase
             $this->entityManager->flush();
         }
 
-        $this->unauthorizedClient->request(
-            'GET',
-            $this->router->generate('app.products.get', ['id' => $product->getId()])
-        );
-
-        $response = $this->unauthorizedClient->getResponse();
+        $response = $this->performRequest('GET', 'app.products.get', ['id' => $product->getId()], [], false);
         $responseContent = json_decode($response->getContent());
 
         $this->assertEquals(
@@ -114,12 +104,7 @@ class ProductControllerTest extends ApiTestCase
         $product && $this->entityManager->remove($product);
         $this->entityManager->flush();
 
-        $this->unauthorizedClient->request(
-            'GET',
-            $this->router->generate('app.products.get', ['id' => 2077])
-        );
-
-        $response = $this->unauthorizedClient->getResponse();
+        $response = $this->performRequest('GET', 'app.products.get', ['id' => 2077], [], false);
 
         $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
     }
@@ -131,19 +116,16 @@ class ProductControllerTest extends ApiTestCase
         $product && $this->entityManager->remove($product);
         $this->entityManager->flush();
 
-        $this->authorizedClient->request(
+        $response = $this->performRequest(
             'POST',
-            $this->router->generate('app.products.create'),
+            'app.products.create',
             [],
-            [],
-            [],
-            json_encode([
+            [
                 'name' => 'Cyberpunk 2077',
                 'price' => '59.99',
-            ])
+            ]
         );
 
-        $response = $this->authorizedClient->getResponse();
         $responseContent = json_decode($response->getContent());
         $product = $this->entityManager->getRepository(Product::class)->findOneBy(['name' => 'Cyberpunk 2077']);
 
@@ -196,50 +178,46 @@ class ProductControllerTest extends ApiTestCase
 
     public function testCreateActionReturnsUnauthorized()
     {
-        $this->unauthorizedClient->request(
-            'POST',
-            $this->router->generate('app.products.create')
-        );
-
-        $response = $this->unauthorizedClient->getResponse();
+        $response = $this->performRequest('POST', 'app.products.create', [], [], false);
 
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
     public function testUpdateActionSucceeds()
     {
+        $product = $this->entityManager->getRepository(Product::class)->findOneBy(['name' => 'faulty string']);
+        $product && $this->entityManager->remove($product);
         $product = $this->entityManager->getRepository(Product::class)->findOneBy(['name' => 'Cyberpunk 2077']);
-        if (!$product) {
-            $product = (new Product)
-                ->setName('faulty string')
-                ->setPrice(5559.995);
-            $this->entityManager->persist($product);
-            $this->entityManager->flush();
-        }
+        $product && $this->entityManager->remove($product);
+        $this->entityManager->flush();
 
-        $this->authorizedClient->request(
+        $product = (new Product)
+            ->setName('faulty string')
+            ->setPrice(5559.995);
+        $this->entityManager->persist($product);
+        $this->entityManager->flush();
+
+        $response = $this->performRequest(
             'PATCH',
-            $this->router->generate('app.products.update', ['id' => $product->getId()]),
-            [],
-            [],
-            [],
-            json_encode([
+            'app.products.update',
+            [
+                'id' => $product->getId()
+            ],
+            [
                 'name' => 'Cyberpunk 2077',
                 'price' => '59.99',
-            ])
+            ]
         );
 
-        $response = $this->authorizedClient->getResponse();
         $responseContent = json_decode($response->getContent());
-        $this->entityManager->refresh($product);
 
         $this->assertEquals(
             [
                 'status_code' => Response::HTTP_OK,
                 'content' => [
                     'id' => $product->getId(),
-                    'name' => $product->getName(),
-                    'price' => $product->getPrice(),
+                    'name' => 'Cyberpunk 2077',
+                    'price' => '59.99',
                     'created_at' => $product->getCreatedAt()->format(\DateTime::ATOM),
                     'updated_at' => $product->getUpdatedAt()->format(\DateTime::ATOM),
                 ]
@@ -264,19 +242,17 @@ class ProductControllerTest extends ApiTestCase
         $product && $this->entityManager->remove($product);
         $this->entityManager->flush();
 
-        $this->authorizedClient->request(
+        $response = $this->performRequest(
             'PATCH',
-            $this->router->generate('app.products.update', ['id' => 2077]),
-            [],
-            [],
-            [],
-            json_encode([
+            'app.products.update',
+            [
+                'id' => 2077
+            ],
+            [
                 'name' => 'Cyberpunk 2077',
                 'price' => '59.99',
-            ])
+            ]
         );
-
-        $response = $this->authorizedClient->getResponse();
 
         $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
     }
@@ -292,24 +268,14 @@ class ProductControllerTest extends ApiTestCase
             $this->entityManager->flush();
         }
 
-        $this->authorizedClient->request(
-            'PATCH',
-            $this->router->generate('app.products.update', ['id' => $product->getId()])
-        );
-
-        $response = $this->authorizedClient->getResponse();
+        $response = $this->performRequest('PATCH', 'app.products.update', ['id' => $product->getId()]);
 
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
 
     public function testUpdateActionReturnsUnauthorized()
     {
-        $this->unauthorizedClient->request(
-            'PATCH',
-            $this->router->generate('app.products.update', ['id' => 2077])
-        );
-
-        $response = $this->unauthorizedClient->getResponse();
+        $response = $this->performRequest('PATCH', 'app.products.update', ['id' => 2077], [], false);
 
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
@@ -325,12 +291,7 @@ class ProductControllerTest extends ApiTestCase
             $this->entityManager->flush();
         }
 
-        $this->authorizedClient->request(
-            'DELETE',
-            $this->router->generate('app.products.delete', ['id' => $product->getId()])
-        );
-
-        $response = $this->authorizedClient->getResponse();
+        $response =  $this->performRequest('DELETE', 'app.products.delete', ['id' => $product->getId()]);
 
         $this->assertEquals(
             [
@@ -351,24 +312,14 @@ class ProductControllerTest extends ApiTestCase
         $product && $this->entityManager->remove($product);
         $this->entityManager->flush();
 
-        $this->authorizedClient->request(
-            'DELETE',
-            $this->router->generate('app.products.delete', ['id' => 2077])
-        );
-
-        $response = $this->authorizedClient->getResponse();
+        $response = $this->performRequest('DELETE', 'app.products.delete', ['id' => 2077]);
 
         $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
     }
 
     public function testDeleteActionReturnsUnauthorized()
     {
-        $this->unauthorizedClient->request(
-            'DELETE',
-            $this->router->generate('app.products.delete', ['id' => 2077])
-        );
-
-        $response = $this->unauthorizedClient->getResponse();
+        $response = $this->performRequest('DELETE', 'app.products.delete', ['id' => 2077], [], false);
 
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }

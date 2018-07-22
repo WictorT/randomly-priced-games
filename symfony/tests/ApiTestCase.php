@@ -4,7 +4,6 @@ namespace App\Tests;
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,16 +20,6 @@ class ApiTestCase extends WebTestCase
      */
     protected $router;
 
-    /**
-     * @var Client
-     */
-    protected $unauthorizedClient;
-
-    /**
-     * @var Client
-     */
-    protected $authorizedClient;
-
     protected function setUp()
     {
         parent::setUp();
@@ -38,20 +27,6 @@ class ApiTestCase extends WebTestCase
 
         $this->entityManager = static::$container->get('doctrine')->getManager();
         $this->router = static::$container->get('router');
-        // TODO separate unauthorizaed client
-        $this->unauthorizedClient = static::createClient(
-            [],
-            [
-                'CONTENT_TYPE' => 'application/json',
-            ]
-        );
-        $this->authorizedClient = static::createClient(
-            [],
-            [
-                'CONTENT_TYPE' => 'application/json',
-                'HTTP_AUTHORIZATION' => $this->getAccessTokenHeader(),
-            ]
-        );
     }
 
     /**
@@ -76,8 +51,8 @@ class ApiTestCase extends WebTestCase
 
         $client->request(
             $method,
-            $this->router->generate($routeKey),
-            $routeParameters,
+            $this->router->generate($routeKey, $routeParameters),
+            [],
             [],
             [],
             json_encode($requestBody)
