@@ -29,6 +29,7 @@ install:
   - docker-compose exec php mkdir config/jwt
   - docker-compose exec php openssl genrsa -out config/jwt/private.pem
   - docker-compose exec php openssl rsa -pubout -in config/jwt/private.pem -out config/jwt/public.pem
+  - docker-compose exec php cp phpunit.xml.dist phpunit.xml
 
 script:
   - docker-compose exec php ./bin/phpunit

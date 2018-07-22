@@ -10,6 +10,15 @@ class ProductControllerTest extends ApiTestCase
 {
     const DEFAULT_PER_PAGE = 3;
     const DEFAULT_PAGE = 1;
+    const TEST_PRODUCT_PRICE = 59.99;
+    const TEST_PRODUCT_NAME = 'Cyberpunk 2077';
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->createProduct();
+    }
 
     public function testIndexActionSuccess()
     {
@@ -61,14 +70,7 @@ class ProductControllerTest extends ApiTestCase
 
     public function testGetActionSuccess()
     {
-        $product = $this->entityManager->getRepository(Product::class)->findOneBy(['name' => 'Cyberpunk 2077']);
-        if (!$product) {
-            $product = (new Product)
-                ->setName('Cyberpunk 2077')
-                ->setPrice(59.99);
-            $this->entityManager->persist($product);
-            $this->entityManager->flush();
-        }
+        $product = $this->createProduct();
 
         $response = $this->performRequest('GET', 'app.products.get', ['id' => $product->getId()], [], false);
         $responseContent = json_decode($response->getContent());
@@ -99,10 +101,7 @@ class ProductControllerTest extends ApiTestCase
 
     public function testGetActionReturnsNotFound()
     {
-        // Try to remove product with id 2077 to induce NotFoundHttpException
-        $product = $this->entityManager->find(Product::class, 2077);
-        $product && $this->entityManager->remove($product);
-        $this->entityManager->flush();
+        $this->removeProduct(['id' => 2077]);
 
         $response = $this->performRequest('GET', 'app.products.get', ['id' => 2077], [], false);
 
@@ -111,31 +110,27 @@ class ProductControllerTest extends ApiTestCase
 
     public function testCreateActionSucceeds()
     {
-        // remove product with name=user@mail.com or username=user to avoid conflict
-        $product = $this->entityManager->getRepository(Product::class)->findOneBy(['name' => 'Cyberpunk 2077']);
-        $product && $this->entityManager->remove($product);
-        $this->entityManager->flush();
+        $this->removeProduct();
 
         $response = $this->performRequest(
             'POST',
             'app.products.create',
             [],
             [
-                'name' => 'Cyberpunk 2077',
-                'price' => '59.99',
+                'name' => self::TEST_PRODUCT_NAME,
+                'price' => self::TEST_PRODUCT_PRICE,
             ]
         );
-
         $responseContent = json_decode($response->getContent());
-        $product = $this->entityManager->getRepository(Product::class)->findOneBy(['name' => 'Cyberpunk 2077']);
+        $product = $this->entityManager->getRepository(Product::class)->findOneBy(['name' => self::TEST_PRODUCT_NAME]);
 
         $this->assertEquals(
             [
                 'status_code' => Response::HTTP_CREATED,
                 'content' => [
                     'id' => $product->getId(),
-                    'name' => 'Cyberpunk 2077',
-                    'price' => '59.99',
+                    'name' => self::TEST_PRODUCT_NAME,
+                    'price' => self::TEST_PRODUCT_PRICE,
                     'created_at' => $product->getCreatedAt()->format(\DateTime::ATOM),
                     'updated_at' => $product->getUpdatedAt()->format(\DateTime::ATOM),
                 ]
@@ -156,8 +151,9 @@ class ProductControllerTest extends ApiTestCase
     /**
      * @dataProvider dataTestCreateActionReturnsBadRequest
      * @param array $data
+     * @param null|\Closure $setup
      */
-    public function testCreateActionReturnsBadRequest(array $data)
+    public function testCreateActionReturnsBadRequest(array $data, $setup = null)
     {
         $response = $this->performRequest('POST', 'app.products.create', [], $data);
 
@@ -173,6 +169,40 @@ class ProductControllerTest extends ApiTestCase
             'case 1: no parameters' => [
                 'data' => [],
             ],
+            'case 2: no name' => [
+                'data' => [
+                    'price' => self::TEST_PRODUCT_PRICE,
+                ],
+            ],
+            'case 3: no price' => [
+                'data' => [
+                    'name' => self::TEST_PRODUCT_NAME,
+                ],
+            ],
+            'case 4: negative price' => [
+                'data' => [
+                    'name' => self::TEST_PRODUCT_NAME,
+                    'price' => - self::TEST_PRODUCT_PRICE,
+                ]
+            ],
+            'case 5: duplication' => [
+                'data' => [
+                    'name' => self::TEST_PRODUCT_NAME,
+                    'price' => self::TEST_PRODUCT_PRICE,
+                ]
+            ],
+            'case 6: too long name' => [
+                'data' => [
+                    'name' => '12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890',
+                    'price' => self::TEST_PRODUCT_PRICE,
+                ]
+            ],
+            'case 7: invalid price type' => [
+                'data' => [
+                    'name' => self::TEST_PRODUCT_NAME,
+                    'price' => self::TEST_PRODUCT_NAME,
+                ]
+            ],
         ];
     }
 
@@ -185,11 +215,8 @@ class ProductControllerTest extends ApiTestCase
 
     public function testUpdateActionSucceeds()
     {
-        $product = $this->entityManager->getRepository(Product::class)->findOneBy(['name' => 'faulty string']);
-        $product && $this->entityManager->remove($product);
-        $product = $this->entityManager->getRepository(Product::class)->findOneBy(['name' => 'Cyberpunk 2077']);
-        $product && $this->entityManager->remove($product);
-        $this->entityManager->flush();
+        $this->removeProduct(['name' => 'faulty string']);
+        $this->removeProduct();
 
         $product = (new Product)
             ->setName('faulty string')
@@ -204,8 +231,8 @@ class ProductControllerTest extends ApiTestCase
                 'id' => $product->getId()
             ],
             [
-                'name' => 'Cyberpunk 2077',
-                'price' => '59.99',
+                'name' => self::TEST_PRODUCT_NAME,
+                'price' => self::TEST_PRODUCT_PRICE,
             ]
         );
 
@@ -216,8 +243,8 @@ class ProductControllerTest extends ApiTestCase
                 'status_code' => Response::HTTP_OK,
                 'content' => [
                     'id' => $product->getId(),
-                    'name' => 'Cyberpunk 2077',
-                    'price' => '59.99',
+                    'name' => self::TEST_PRODUCT_NAME,
+                    'price' => self::TEST_PRODUCT_PRICE,
                     'created_at' => $product->getCreatedAt()->format(\DateTime::ATOM),
                     'updated_at' => $product->getUpdatedAt()->format(\DateTime::ATOM),
                 ]
@@ -237,10 +264,7 @@ class ProductControllerTest extends ApiTestCase
 
     public function testUpdateActionReturnsNotFound()
     {
-        // Try to remove product with id 2077 to induce NotFoundHttpException
-        $product = $this->entityManager->find(Product::class, 2077);
-        $product && $this->entityManager->remove($product);
-        $this->entityManager->flush();
+        $this->removeProduct(['id' => 2077]);
 
         $response = $this->performRequest(
             'PATCH',
@@ -249,28 +273,66 @@ class ProductControllerTest extends ApiTestCase
                 'id' => 2077
             ],
             [
-                'name' => 'Cyberpunk 2077',
-                'price' => '59.99',
+                'name' => self::TEST_PRODUCT_NAME,
+                'price' => self::TEST_PRODUCT_PRICE,
             ]
         );
 
         $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
     }
 
-    public function testUpdateActionReturnsBadRequest()
+    /**
+     * @dataProvider dataTestUpdateActionReturnsBadRequest
+     * @param array $data
+     */
+    public function testUpdateActionReturnsBadRequest(array $data)
     {
-        $product = $this->entityManager->getRepository(Product::class)->findOneBy(['name' => 'Cyberpunk 2077']);
-        if (!$product) {
-            $product = (new Product)
-                ->setName('Cyberpunk 2077')
-                ->setPrice(59.99);
-            $this->entityManager->persist($product);
-            $this->entityManager->flush();
-        }
+        $product = $this->createProduct('faulty name', '99999');
 
-        $response = $this->performRequest('PATCH', 'app.products.update', ['id' => $product->getId()]);
+        $response = $this->performRequest('PATCH', 'app.products.update', ['id' => $product->getId()], $data);
 
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+    }
+
+
+    /**
+     * @return array
+     */
+    public function dataTestUpdateActionReturnsBadRequest() : array
+    {
+        return [
+            'case 1: no parameters' => [
+                'data' => [],
+            ],
+            'case 2: no name' => [
+                'data' => [
+                    'price' => self::TEST_PRODUCT_PRICE,
+                ],
+            ],
+            'case 3: no price' => [
+                'data' => [
+                    'name' => self::TEST_PRODUCT_NAME,
+                ],
+            ],
+            'case 4: negative price' => [
+                'data' => [
+                    'name' => self::TEST_PRODUCT_NAME,
+                    'price' => - self::TEST_PRODUCT_PRICE,
+                ]
+            ],
+            'case 5: duplication' => [
+                'data' => [
+                    'name' => self::TEST_PRODUCT_NAME,
+                    'price' => self::TEST_PRODUCT_PRICE,
+                ]
+            ],
+            'case 6: too long name' => [
+                'data' => [
+                    'name' => '12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890',
+                    'price' => self::TEST_PRODUCT_PRICE,
+                ]
+            ],
+        ];
     }
 
     public function testUpdateActionReturnsUnauthorized()
@@ -282,14 +344,7 @@ class ProductControllerTest extends ApiTestCase
 
     public function testDeleteActionSucceeds()
     {
-        $product = $this->entityManager->getRepository(Product::class)->findOneBy(['name' => 'Cyberpunk 2077']);
-        if (!$product) {
-            $product = (new Product)
-                ->setName('Cyberpunk 2077')
-                ->setPrice(59.99);
-            $this->entityManager->persist($product);
-            $this->entityManager->flush();
-        }
+        $product = $this->createProduct();
 
         $response =  $this->performRequest('DELETE', 'app.products.delete', ['id' => $product->getId()]);
 
@@ -307,10 +362,7 @@ class ProductControllerTest extends ApiTestCase
 
     public function testDeleteActionReturnsNotFound()
     {
-        // Try to remove product with id 2077 to induce NotFoundHttpException
-        $product = $this->entityManager->find(Product::class, 2077);
-        $product && $this->entityManager->remove($product);
-        $this->entityManager->flush();
+        $this->removeProduct(['id' => 2077]);
 
         $response = $this->performRequest('DELETE', 'app.products.delete', ['id' => 2077]);
 
@@ -322,5 +374,40 @@ class ProductControllerTest extends ApiTestCase
         $response = $this->performRequest('DELETE', 'app.products.delete', ['id' => 2077], [], false);
 
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    /**
+     * @param string $name
+     * @param float $price
+     * @return Product|null|object
+     */
+    private function createProduct($name = self::TEST_PRODUCT_NAME, $price = self::TEST_PRODUCT_PRICE): Product
+    {
+        $product = $this->entityManager->getRepository(Product::class)->findOneBy(['name' => $name]);
+
+        if ($product) {
+            $product->setPrice($price);
+            $this->entityManager->merge($product);
+        } else {
+            $product = (new Product)
+                ->setName($name)
+                ->setPrice($price);
+            $this->entityManager->persist($product);
+        }
+        $this->entityManager->flush();
+
+        return $product;
+    }
+
+    /**
+     * @param array $findParams
+     * @return void
+     */
+    private function removeProduct(array $findParams = ['name' => self::TEST_PRODUCT_NAME])
+    {
+        $product = $this->entityManager->getRepository(Product::class)->findOneBy($findParams);
+        $product && $this->entityManager->remove($product);
+
+        $this->entityManager->flush();
     }
 }

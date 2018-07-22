@@ -22,10 +22,10 @@
         <env name="JWT_PASSPHRASE" value="56042e589801e76353c1fab7c9220579"/>
         <env name="DATABASE_URL" value="mysql://root:root@db/rpg_test" />
         <env name="TEST_DATABASE_URL" value="mysql://root:root@db/rpg_test" />
+        <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak" />
         <!-- ###- lexik/jwt-authentication-bundle ### -->
 
         <!-- ###+ snc/redis-bundle ### -->
-        <!-- passwords that contain special characters (@, %, :, +) must be urlencoded -->
         <env name="REDIS_URL" value="redis://localhost"/>
         <!-- ###- snc/redis-bundle ### -->
     </php>

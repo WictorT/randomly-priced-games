@@ -22,6 +22,7 @@ class ProductDTO extends BaseDTO
      *
      * @Assert\NotBlank()
      * @Assert\Type("float")
+     * @Assert\GreaterThanOrEqual(0)
      *
      * @var float
      */
