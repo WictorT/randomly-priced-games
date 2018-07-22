@@ -195,6 +195,114 @@ class ProductControllerTest extends ApiTestCase
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
+    public function testUpdateActionSucceeds()
+    {
+        $product = $this->entityManager->getRepository(Product::class)->findOneBy(['name' => 'Cyberpunk 2077']);
+        if (!$product) {
+            $product = (new Product)
+                ->setName('faulty string')
+                ->setPrice(5559.995);
+            $this->entityManager->persist($product);
+            $this->entityManager->flush();
+        }
+
+        $this->authorizedClient->request(
+            'PATCH',
+            $this->router->generate('app.products.update', ['id' => $product->getId()]),
+            [],
+            [],
+            [],
+            json_encode([
+                'name' => 'Cyberpunk 2077',
+                'price' => '59.99',
+            ])
+        );
+
+        $response = $this->authorizedClient->getResponse();
+        $responseContent = json_decode($response->getContent());
+        $this->entityManager->refresh($product);
+
+        $this->assertEquals(
+            [
+                'status_code' => Response::HTTP_OK,
+                'content' => [
+                    'id' => $product->getId(),
+                    'name' => $product->getName(),
+                    'price' => $product->getPrice(),
+                    'created_at' => $product->getCreatedAt()->format(\DateTime::ATOM),
+                    'updated_at' => $product->getUpdatedAt()->format(\DateTime::ATOM),
+                ]
+            ],
+            [
+                'status_code' => $response->getStatusCode(),
+                'content' => [
+                    'id' => $responseContent->id,
+                    'name' => $responseContent->name,
+                    'price' => $responseContent->price,
+                    'created_at' => $responseContent->created_at,
+                    'updated_at' => $responseContent->updated_at,
+                ]
+            ]
+        );
+    }
+
+    public function testUpdateActionReturnsNotFound()
+    {
+        // Try to remove product with id 2077 to induce NotFoundHttpException
+        $product = $this->entityManager->find(Product::class, 2077);
+        $product && $this->entityManager->remove($product);
+        $this->entityManager->flush();
+
+        $this->authorizedClient->request(
+            'PATCH',
+            $this->router->generate('app.products.update', ['id' => 2077]),
+            [],
+            [],
+            [],
+            json_encode([
+                'name' => 'Cyberpunk 2077',
+                'price' => '59.99',
+            ])
+        );
+
+        $response = $this->authorizedClient->getResponse();
+
+        $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
+    }
+
+    public function testUpdateActionReturnsBadRequest()
+    {
+        $product = $this->entityManager->getRepository(Product::class)->findOneBy(['name' => 'Cyberpunk 2077']);
+        if (!$product) {
+            $product = (new Product)
+                ->setName('Cyberpunk 2077')
+                ->setPrice(59.99);
+            $this->entityManager->persist($product);
+            $this->entityManager->flush();
+        }
+
+        $this->authorizedClient->request(
+            'PATCH',
+            $this->router->generate('app.products.update', ['id' => $product->getId()])
+        );
+
+        $response = $this->authorizedClient->getResponse();
+
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+    }
+
+    public function testUpdateActionReturnsUnauthorized()
+    {
+        $this->unauthorizedClient->request(
+            'PATCH',
+            $this->router->generate('app.products.update', ['id' => 2077])
+        );
+
+        $response = $this->unauthorizedClient->getResponse();
+
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
     public function testDeleteActionSucceeds()
     {
         $product = $this->entityManager->getRepository(Product::class)->findOneBy(['name' => 'Cyberpunk 2077']);
@@ -227,14 +335,10 @@ class ProductControllerTest extends ApiTestCase
 
     public function testDeleteActionReturnsNotFound()
     {
-        $product = $this->entityManager->getRepository(Product::class)->findOneBy(['name' => 'Cyberpunk 2077']);
-        if (!$product) {
-            $product = (new Product)
-                ->setName('Cyberpunk 2077')
-                ->setPrice(59.99);
-            $this->entityManager->persist($product);
-            $this->entityManager->flush();
-        }
+        // Try to remove product with id 2077 to induce NotFoundHttpException
+        $product = $this->entityManager->find(Product::class, 2077);
+        $product && $this->entityManager->remove($product);
+        $this->entityManager->flush();
 
         $this->authorizedClient->request(
             'DELETE',
