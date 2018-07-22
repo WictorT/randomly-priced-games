@@ -294,7 +294,6 @@ class ProductControllerTest extends ApiTestCase
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
 
-
     /**
      * @return array
      */
@@ -328,7 +327,7 @@ class ProductControllerTest extends ApiTestCase
             ],
             'case 6: too long name' => [
                 'data' => [
-                    'name' => '12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890',
+                    'name' => str_repeat('n', 256),
                     'price' => self::TEST_PRODUCT_PRICE,
                 ]
             ],
