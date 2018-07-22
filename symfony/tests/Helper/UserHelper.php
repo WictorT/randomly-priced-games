@@ -79,7 +79,6 @@ class UserHelper
             return $user;
         }
 
-
         // remove users with email=admin@mail.com or username=admin to avoid conflict
         $user = $userRepository->findOneBy(['username' => 'admin']);
         $user && $this->entityManager->remove($user);

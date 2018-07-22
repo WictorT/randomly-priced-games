@@ -31,8 +31,10 @@ class ApiTestCase extends WebTestCase
         static::bootKernel();
 
         $this->entityManager = static::$container->get('doctrine')->getManager();
-        $this->router = static::$container->get('router');
         $this->userHelper = (new UserHelper($this->entityManager));
+        $this->router = static::$container->get('router');
+
+        $this->userHelper->guaranteeAdminUserExists();
     }
 
     /**
@@ -72,8 +74,6 @@ class ApiTestCase extends WebTestCase
      */
     protected function getAccessTokenHeader()
     {
-        $this->userHelper->guaranteeAdminUserExists();
-
         $client = static::createClient();
         $client->request(
             'POST',
