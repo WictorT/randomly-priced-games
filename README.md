@@ -4,11 +4,11 @@
 <p align="center">This is a gaming store API, which provides basic functionality for product management </p>
 
 ### Prerequisites
- - **Linux/OS X Windows)**
+ - **Linux/OS X/Windows**
  - [**Git**](https://www.atlassian.com/git/tutorials/install-git)
  - [**Docker**](https://docs.docker.com/engine/installation/)
 
-### Set up
+### Set up (for linux systems)
 1. Clone this repository using: `git clone https://github.com/WictorT/randomly-priced-games.git`
 2. `cd randomly-priced-games`
 3. Run `docker-compose build --no-cache` to build images.
@@ -38,14 +38,13 @@ You can now access the application here (by default): [http://localhost:3000](ht
 ### Launching tests
 - To launch tests tests run:
 ```
-docker-compose -f docker/development/docker-compose.yml -f docker/testing/docker-compose.yml -p $(basename $(pwd)) exec php ./vendor/bin/phpunit
+docker-compose exec php ./bin/phpunit
 ```
 - To launch tests with code coverage and logging you can use the command:
 ```
-docker-compose -f docker/development/docker-compose.yml -f docker/testing/docker-compose.yml -p $(basename $(pwd)) exec php ./vendor/bin/phpunit --coverage-clover coverage/clover.xml --log-junit coverage/junit.xml
+docker-compose exec php ./bin/phpunit --coverage-html coverage
 ```
-this will create a coverage file: [coverage/clover.xml](coverage/clover.xml),
-and a logging one: [coverage/junit.xml](coverage/junit.xml)
+this will create some coverage files, to see the report open: [coverage/index.xml](coverage/index.xml),
 
 <h2 align="center"> Thank you! </h2>
 <h3> Provided by Victor Timoftii </h3>
