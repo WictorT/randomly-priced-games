@@ -1,27 +1,16 @@
 <?php
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Table(name="rpg_products")
  * @ORM\Entity(repositoryClass="App\Repository\ProductRepository")
- * @ORM\HasLifecycleCallbacks()
  * @UniqueEntity("name")
  */
 class Product extends BaseEntity
 {
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     *
-     * @var int
-     */
-    private $id;
-
     /**
      * @ORM\Column(type="string", length=254, unique=true)
      *
@@ -35,35 +24,6 @@ class Product extends BaseEntity
      * @var float
      */
     private $price;
-
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\CartItem", mappedBy="product", cascade={"remove"})
-     *
-     * @var CartItem[]|ArrayCollection
-     */
-    private $cartItems;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="created_at", type="datetime")
-     */
-    private $createdAt;
-
-    /**
-     * @var \DateTime|null
-     *
-     * @ORM\Column(name="updated_at", type="datetime", nullable=true)
-     */
-    private $updatedAt;
-
-    /**
-     * @return int|null
-     */
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
 
     /**
      * @return string
@@ -100,42 +60,5 @@ class Product extends BaseEntity
     {
         $this->price = $price;
         return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt(): \DateTime
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @return \DateTime|null
-     */
-    public function getUpdatedAt(): ?\DateTime
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @ORM\PrePersist()
-     *
-     * @return void
-     */
-    public function prePersist(): void
-    {
-        $this->createdAt = new \DateTime();
-        $this->updatedAt = new \DateTime();
-    }
-
-    /**
-     * @ORM\PreUpdate()
-     *
-     * @return void
-     */
-    public function preUpdate(): void
-    {
-        $this->updatedAt = new \DateTime();
     }
 }

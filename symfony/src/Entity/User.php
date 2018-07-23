@@ -10,21 +10,12 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * @ORM\Table(name="rpg_users")
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
- * @ORM\HasLifecycleCallbacks()
  * @UniqueEntity("email")
  * @UniqueEntity("username")
  */
 class User extends BaseEntity implements UserInterface
 {
     public const TOTAL_CART_PRICE_KEY_PREFIX = 'total_cart_price_for_user_';
-
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @var int
-     */
-    private $id;
 
     /**
      * @ORM\Column(type="string", length=25, unique=true)
@@ -54,31 +45,9 @@ class User extends BaseEntity implements UserInterface
      */
     private $cartItems;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="created_at", type="datetime")
-     */
-    private $createdAt;
-
-    /**
-     * @var \DateTime|null
-     *
-     * @ORM\Column(name="updated_at", type="datetime", nullable=true)
-     */
-    private $updatedAt;
-
     public function __construct()
     {
         $this->cartItems = new ArrayCollection();
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     /**
@@ -166,22 +135,6 @@ class User extends BaseEntity implements UserInterface
     }
 
     /**
-     * @return \DateTime
-     */
-    public function getCreatedAt(): \DateTime
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @return \DateTime|null
-     */
-    public function getUpdatedAt(): ?\DateTime
-    {
-        return $this->updatedAt;
-    }
-
-    /**
      * @return array
      */
     public function getRoles(): array
@@ -191,26 +144,5 @@ class User extends BaseEntity implements UserInterface
 
     public function eraseCredentials(): void
     {
-    }
-
-    /**
-     * @ORM\PrePersist()
-     *
-     * @return void
-     */
-    public function prePersist(): void
-    {
-        $this->createdAt = new \DateTime();
-        $this->updatedAt = new \DateTime();
-    }
-
-    /**
-     * @ORM\PreUpdate()
-     *
-     * @return void
-     */
-    public function preUpdate(): void
-    {
-        $this->updatedAt = new \DateTime();
     }
 }
