@@ -1,11 +1,12 @@
 <?php
 namespace App\Handler;
 
+use App\DTO\BaseDTO;
 use App\DTO\UserDTO;
 use App\Entity\User;
 use App\Repository\BaseRepository;
 use App\Repository\UserRepository;
-use App\Transformer\UserBaseTransformer;
+use App\Transformer\UserTransformer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -17,7 +18,7 @@ class UserHandler extends BaseHandler
     private $entityManager;
 
     /**
-     * @var UserBaseTransformer
+     * @var UserTransformer
      */
     private $transformer;
 
@@ -28,12 +29,12 @@ class UserHandler extends BaseHandler
 
     /**
      * @param EntityManagerInterface $entityManager
-     * @param UserBaseTransformer $transformer
+     * @param UserTransformer $transformer
      * @param ValidatorInterface $validator
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        UserBaseTransformer $transformer,
+        UserTransformer $transformer,
         ValidatorInterface $validator
     ) {
         $this->entityManager = $entityManager;
@@ -43,9 +44,9 @@ class UserHandler extends BaseHandler
 
     /**
      * @param UserDTO $userDTO
-     * @return User
+     * @return BaseDTO
      */
-    public function create(UserDTO $userDTO): User
+    public function create(UserDTO $userDTO): BaseDTO
     {
         $user = $this->transformer->reverseTransform($userDTO);
 
@@ -55,7 +56,7 @@ class UserHandler extends BaseHandler
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        return $user;
+        return $this->transformer->transform($user);
     }
 
     /**

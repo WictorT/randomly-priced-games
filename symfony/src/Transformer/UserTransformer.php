@@ -7,7 +7,7 @@ use App\Entity\BaseEntity;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-class UserBaseTransformer extends BaseTransformer
+class UserTransformer extends BaseTransformer
 {
     /**
      * @var UserPasswordEncoderInterface
@@ -29,7 +29,15 @@ class UserBaseTransformer extends BaseTransformer
      */
     public function transform(BaseEntity $entity): BaseDTO
     {
-        // TODO: Implement transform() method.
+        $dto = new UserDTO();
+
+        $dto->id = $entity->getId();
+        $dto->username = $entity->getUsername();
+        $dto->email = $entity->getEmail();
+        $dto->createdAt = $entity->getCreatedAt();
+        $dto->updatedAt = $entity->getUpdatedAt();
+
+        return $dto;
     }
 
     /**

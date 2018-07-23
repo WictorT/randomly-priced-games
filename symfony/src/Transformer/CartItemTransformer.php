@@ -42,6 +42,6 @@ class CartItemTransformer extends BaseTransformer
      */
     public function reverseTransform(BaseDTO $dto, ?BaseEntity $entity = null): BaseEntity
     {
-        // TODO: Implement reverseTransform() method.
+        // TODO: implement when it will be required
     }
 }
