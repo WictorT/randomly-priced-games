@@ -17,5 +17,3 @@ setfacl -R -m u:"$HTTPDUSER":rwX -m u:`whoami`:rwX var/cache var/log config/jwt/
 setfacl -dR -m u:"$HTTPDUSER":rwX -m u:`whoami`:rwX var/cache var/log config/jwt/
 
 cp phpunit.xml.dist phpunit.xml
-
-bin/console cache:clear --env=${environment};

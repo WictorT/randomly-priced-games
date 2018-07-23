@@ -48,6 +48,22 @@ class ExceptionListener
      * @param \Exception $exception
      * @return string
      */
+    private function getResponseJson(\Exception $exception): string
+    {
+        $message = [
+            'code' => $this->getResponseCode($exception),
+            'message' => $this->getErrorMessage($exception),
+        ];
+
+        return $this->serializer->serialize($message, 'json', array_merge(array(
+            'json_encode_options' => JsonResponse::DEFAULT_ENCODING_OPTIONS,
+        )));
+    }
+
+    /**
+     * @param \Exception $exception
+     * @return string
+     */
     private function getErrorMessage(\Exception $exception): string
     {
         if ($exception instanceof NotFoundHttpException) {
@@ -68,21 +84,5 @@ class ExceptionListener
         }
 
         return Response::HTTP_INTERNAL_SERVER_ERROR;
-    }
-
-    /**
-     * @param \Exception $exception
-     * @return string
-     */
-    private function getResponseJson(\Exception $exception): string
-    {
-        $message = [
-            'code' => $this->getResponseCode($exception),
-            'message' => $this->getErrorMessage($exception),
-        ];
-
-        return $this->serializer->serialize($message, 'json', array_merge(array(
-            'json_encode_options' => JsonResponse::DEFAULT_ENCODING_OPTIONS,
-        )));
     }
 }
