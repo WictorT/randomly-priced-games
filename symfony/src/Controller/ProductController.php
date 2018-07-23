@@ -94,9 +94,9 @@ class ProductController extends FOSRestController
     {
         $this->productHandler->handleValidationErrors($validationErrors);
 
-        $product = $this->productHandler->create($productDTO);
+        $productDTO = $this->productHandler->create($productDTO);
 
-        return View::create($product, Response::HTTP_CREATED);
+        return View::create($productDTO, Response::HTTP_CREATED);
     }
 
     /**
@@ -118,9 +118,9 @@ class ProductController extends FOSRestController
     ): View {
         $this->productHandler->handleValidationErrors($validationErrors);
 
-        $this->productHandler->update($product, $productDTO);
+        $productDTO = $this->productHandler->update($product, $productDTO);
 
-        return View::create($product, Response::HTTP_OK);
+        return View::create($productDTO, Response::HTTP_OK);
     }
 
     /**

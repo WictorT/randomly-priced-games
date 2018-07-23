@@ -10,6 +10,11 @@ use App\Repository\ProductRepository;
 use App\Transformer\ProductTransformer;
 use Doctrine\ORM\EntityManagerInterface;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
+use Pagerfanta\Exception\LessThan1CurrentPageException;
+use Pagerfanta\Exception\LessThan1MaxPerPageException;
+use Pagerfanta\Exception\NotIntegerCurrentPageException;
+use Pagerfanta\Exception\NotIntegerMaxPerPageException;
+use Pagerfanta\Exception\OutOfRangeCurrentPageException;
 use Pagerfanta\Pagerfanta;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -94,9 +99,17 @@ class ProductHandler extends BaseHandler
         $queryBuilder = $this->getRepository()->getQueryBuilder();
         $adapter = new DoctrineORMAdapter($queryBuilder);
 
-        $paginator = (new Pagerfanta($adapter))
-            ->setMaxPerPage($perPage)
-            ->setCurrentPage($page);
+        $paginator = new Pagerfanta($adapter);
+        try {
+            $paginator->setMaxPerPage($perPage);
+        } catch (LessThan1MaxPerPageException|NotIntegerMaxPerPageException $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
+        try {
+            $paginator->setCurrentPage($page);
+        } catch (OutOfRangeCurrentPageException|LessThan1CurrentPageException|NotIntegerCurrentPageException $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
 
         $pageResults = $paginator->getCurrentPageResults();
 
@@ -114,11 +127,9 @@ class ProductHandler extends BaseHandler
     /**
      * @param BaseDTO|ProductDTO $productDto
      *
-     * @throws BadRequestHttpException
-     *
-     * @return BaseEntity|Product
+     * @return BaseDTO
      */
-    public function create(BaseDTO $productDto): BaseEntity
+    public function create(BaseDTO $productDto): BaseDTO
     {
         $product = $this->transformer->reverseTransform($productDto);
 
@@ -128,18 +139,16 @@ class ProductHandler extends BaseHandler
         $this->entityManager->persist($product);
         $this->entityManager->flush();
 
-        return $product;
+        return $this->transformer->transform($product);
     }
 
     /**
      * @param BaseEntity $product
      * @param BaseDTO $productDto
      *
-     * @throws BadRequestHttpException
-     *
-     * @return BaseEntity
+     * @return BaseDTO
      */
-    public function update(BaseEntity $product, BaseDTO $productDto): BaseEntity
+    public function update(BaseEntity $product, BaseDTO $productDto): BaseDTO
     {
         $product = $this->transformer->reverseTransform($productDto, $product);
 
@@ -149,7 +158,7 @@ class ProductHandler extends BaseHandler
         $this->entityManager->merge($product);
         $this->entityManager->flush();
 
-        return $product;
+        return $this->transformer->transform($product);
     }
 
     /**
