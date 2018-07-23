@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class ExceptionListener
@@ -67,6 +68,10 @@ class ExceptionListener
     private function getErrorMessage(\Exception $exception): string
     {
         if ($exception instanceof NotFoundHttpException) {
+            if ($exception->getPrevious() instanceof ResourceNotFoundException) {
+                return $exception->getMessage();
+            }
+
             return 'Entity not found';
         }
 

@@ -33,7 +33,7 @@
     ```
 8. (inside php container) Run `sh setup.sh` if it is the first time you launched the project
 
-You can now access the application here (by default): [http://localhost:3000](http://localhost:3000)
+You can now access the application here (by default): [http://localhost](http://localhost)
 
 ### Launching tests
 - To launch tests tests run:
