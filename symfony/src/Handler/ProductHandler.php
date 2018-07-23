@@ -70,6 +70,7 @@ class ProductHandler extends BaseHandler
      */
     public function getById(int $productId): ?Product
     {
+        /** @var Product $product */
         $product = $this->getRepository()->find($productId);
         if ($product === null) {
             throw new NotFoundHttpException();
@@ -91,6 +92,8 @@ class ProductHandler extends BaseHandler
     /**
      * @param int $page
      * @param int $perPage
+     *
+     * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      *
      * @return array
      */

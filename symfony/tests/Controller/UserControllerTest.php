@@ -15,7 +15,7 @@ class UserControllerTest extends ApiTestCase
         $this->userHelper->createUser(UserHelper::USERNAME, UserHelper::USER_EMAIL, UserHelper::USER_PASSWORD);
     }
 
-    public function testSignUpActionSucceeds()
+    public function testSignUpActionSucceeds(): void
     {
         $this->userHelper->removeUser(['username' => UserHelper::NEW_USERNAME]);
         $this->userHelper->removeUser(['email' => UserHelper::NEW_USER_EMAIL]);
@@ -39,8 +39,6 @@ class UserControllerTest extends ApiTestCase
                 'content' => [
                     'username' => UserHelper::NEW_USERNAME,
                     'email' => UserHelper::NEW_USER_EMAIL,
-                    'cart_items' => [],
-                    'password' => 'exists',
                     'created_at' => 'exists',
                     'updated_at' => 'exists',
                 ]
@@ -50,8 +48,6 @@ class UserControllerTest extends ApiTestCase
                 'content' => [
                     'username' => $responseContent->username,
                     'email' => $responseContent->email,
-                    'cart_items' => $responseContent->cart_items,
-                    'password' => $responseContent->password ? 'exists' : 'is missing',
                     'created_at' => $responseContent->created_at ? 'exists' : 'is missing',
                     'updated_at' => $responseContent->updated_at ? 'exists' : 'is missing',
                 ]
@@ -63,7 +59,7 @@ class UserControllerTest extends ApiTestCase
      * @dataProvider dataTestUpdateActionReturnsBadRequest
      * @param array $data
      */
-    public function testSignUpActionReturnsBadRequest(array $data)
+    public function testSignUpActionReturnsBadRequest(array $data): void
     {
         $this->userHelper->removeUser(['username' => UserHelper::NEW_USERNAME]);
         $this->userHelper->removeUser(['email' => UserHelper::NEW_USER_EMAIL]);

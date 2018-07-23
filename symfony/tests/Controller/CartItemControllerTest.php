@@ -35,7 +35,7 @@ class CartItemControllerTest extends ApiTestCase
         $this->productHelper = new ProductHelper($this->entityManager);
     }
 
-    public function testIndexActionSucceeds()
+    public function testIndexActionSucceeds(): void
     {
         $this->cartItemHelper->emptyCart();
         $this->cartItemHelper->addCartItem($this->productHelper->createProduct('Gwent', 0.0), 9);
@@ -50,75 +50,75 @@ class CartItemControllerTest extends ApiTestCase
             [
                 'status_code' => Response::HTTP_OK,
                 'content' => [
-                    "items" => [
+                    'items' => [
                         [
-                            "id" => 'exists',
-                            "count" => 9,
-                            "product" => [
-                                "id" => 'exists',
-                                "name" => "Gwent",
-                                "price" => 0,
-                                "created_at" => 'exists',
-                                "updated_at" => 'exists',
+                            'id' => 'exists',
+                            'count' => 9,
+                            'product' => [
+                                'id' => 'exists',
+                                'name' => 'Gwent',
+                                'price' => 0,
+                                'created_at' => 'exists',
+                                'updated_at' => 'exists',
                             ],
-                            "created_at" => 'exists',
-                            "updated_at" => 'exists',
+                            'created_at' => 'exists',
+                            'updated_at' => 'exists',
                         ],
                         [
-                            "id" => 'exists',
-                            "count" => 3,
-                            "product" => [
-                                "id" => 'exists',
-                                "name" => "Witcher 3",
-                                "price" => 49.99,
-                                "created_at" => 'exists',
-                                "updated_at" => 'exists',
+                            'id' => 'exists',
+                            'count' => 3,
+                            'product' => [
+                                'id' => 'exists',
+                                'name' => 'Witcher 3',
+                                'price' => 49.99,
+                                'created_at' => 'exists',
+                                'updated_at' => 'exists',
                             ],
-                            "created_at" => 'exists',
-                            "updated_at" => 'exists',
+                            'created_at' => 'exists',
+                            'updated_at' => 'exists',
                         ]
                     ],
-                    "total_price" => 149.97
+                    'total_price' => 149.97
                 ]
             ],
             [
                 'status_code' => $response->getStatusCode(),
                 'content' => [
-                    "items" => [
+                    'items' => [
                         [
-                            "id" => $responseContent->items[0]->id ? 'exists' : 'is missing',
-                            "count" => $responseContent->items[0]->count,
-                            "product" => [
-                                "id" => $responseContent->items[0]->product->id ? 'exists' : 'is missing',
-                                "name" => $responseContent->items[0]->product->name,
-                                "price" => $responseContent->items[0]->product->price,
-                                "created_at" => $responseContent->items[0]->product->created_at ? 'exists' : 'is missing',
-                                "updated_at" => $responseContent->items[0]->product->updated_at ? 'exists' : 'is missing',
+                            'id' => $responseContent->items[0]->id ? 'exists' : 'is missing',
+                            'count' => $responseContent->items[0]->count,
+                            'product' => [
+                                'id' => $responseContent->items[0]->product->id ? 'exists' : 'is missing',
+                                'name' => $responseContent->items[0]->product->name,
+                                'price' => $responseContent->items[0]->product->price,
+                                'created_at' => $responseContent->items[0]->product->created_at ? 'exists' : 'is missing',
+                                'updated_at' => $responseContent->items[0]->product->updated_at ? 'exists' : 'is missing',
                             ],
-                            "created_at" => $responseContent->items[0]->created_at ? 'exists' : 'is missing',
-                            "updated_at" => $responseContent->items[0]->updated_at ? 'exists' : 'is missing',
+                            'created_at' => $responseContent->items[0]->created_at ? 'exists' : 'is missing',
+                            'updated_at' => $responseContent->items[0]->updated_at ? 'exists' : 'is missing',
                         ],
                         [
-                            "id" => $responseContent->items[1]->id ? 'exists' : 'is missing',
-                            "count" => $responseContent->items[1]->count,
-                            "product" => [
-                                "id" => $responseContent->items[1]->product->id ? 'exists' : 'is missing',
-                                "name" => $responseContent->items[1]->product->name,
-                                "price" => $responseContent->items[1]->product->price,
-                                "created_at" => $responseContent->items[1]->product->created_at ? 'exists' : 'is missing',
-                                "updated_at" => $responseContent->items[1]->product->updated_at ? 'exists' : 'is missing',
+                            'id' => $responseContent->items[1]->id ? 'exists' : 'is missing',
+                            'count' => $responseContent->items[1]->count,
+                            'product' => [
+                                'id' => $responseContent->items[1]->product->id ? 'exists' : 'is missing',
+                                'name' => $responseContent->items[1]->product->name,
+                                'price' => $responseContent->items[1]->product->price,
+                                'created_at' => $responseContent->items[1]->product->created_at ? 'exists' : 'is missing',
+                                'updated_at' => $responseContent->items[1]->product->updated_at ? 'exists' : 'is missing',
                             ],
-                            "created_at" => $responseContent->items[1]->created_at ? 'exists' : 'is missing',
-                            "updated_at" => $responseContent->items[1]->updated_at ? 'exists' : 'is missing',
+                            'created_at' => $responseContent->items[1]->created_at ? 'exists' : 'is missing',
+                            'updated_at' => $responseContent->items[1]->updated_at ? 'exists' : 'is missing',
                         ],
                     ],
-                    "total_price" => $responseContent->total_price
+                    'total_price' => $responseContent->total_price
                 ]
             ]
         );
     }
 
-    public function testAddToCartActionSucceedsOnEmptyCard()
+    public function testAddToCartActionSucceedsOnEmptyCard(): void
     {
         $this->cartItemHelper->emptyCart();
         $product = $this->productHelper->createProduct('Witcher 3', 49.99);
@@ -132,39 +132,39 @@ class CartItemControllerTest extends ApiTestCase
             [
                 'status_code' => Response::HTTP_CREATED,
                 'content' => [
-                    "id" => 'exists',
-                    "count" => 1,
-                    "product" => [
-                        "id" => $product->getId(),
-                        "name" => "Witcher 3",
-                        "price" => 49.99,
-                        "created_at" => 'exists',
-                        "updated_at" => 'exists',
+                    'id' => 'exists',
+                    'count' => 1,
+                    'product' => [
+                        'id' => $product->getId(),
+                        'name' => 'Witcher 3',
+                        'price' => 49.99,
+                        'created_at' => 'exists',
+                        'updated_at' => 'exists',
                     ],
-                    "created_at" => 'exists',
-                    "updated_at" => 'exists',
+                    'created_at' => 'exists',
+                    'updated_at' => 'exists',
                 ]
             ],
             [
                 'status_code' => $response->getStatusCode(),
                 'content' => [
-                    "id" => $responseContent->id ? 'exists' : 'is missing',
-                    "count" => $responseContent->count,
-                    "product" => [
-                        "id" => $responseContent->product->id,
-                        "name" => $responseContent->product->name,
-                        "price" => $responseContent->product->price,
-                        "created_at" => $responseContent->product->created_at ? 'exists' : 'is missing',
-                        "updated_at" => $responseContent->product->updated_at ? 'exists' : 'is missing',
+                    'id' => $responseContent->id ? 'exists' : 'is missing',
+                    'count' => $responseContent->count,
+                    'product' => [
+                        'id' => $responseContent->product->id,
+                        'name' => $responseContent->product->name,
+                        'price' => $responseContent->product->price,
+                        'created_at' => $responseContent->product->created_at ? 'exists' : 'is missing',
+                        'updated_at' => $responseContent->product->updated_at ? 'exists' : 'is missing',
                     ],
-                    "created_at" => $responseContent->created_at ? 'exists' : 'is missing',
-                    "updated_at" => $responseContent->updated_at ? 'exists' : 'is missing',
+                    'created_at' => $responseContent->created_at ? 'exists' : 'is missing',
+                    'updated_at' => $responseContent->updated_at ? 'exists' : 'is missing',
                 ]
             ]
         );
     }
 
-    public function testAddToCartActionSucceedsOnMaxItemCount()
+    public function testAddToCartActionSucceedsOnMaxItemCount(): void
     {
         $this->cartItemHelper->emptyCart();
         $product = $this->productHelper->createProduct('Witcher 3', 49.99);
@@ -179,39 +179,39 @@ class CartItemControllerTest extends ApiTestCase
             [
                 'status_code' => Response::HTTP_CREATED,
                 'content' => [
-                    "id" => 'exists',
-                    "count" => 10,
-                    "product" => [
-                        "id" => $product->getId(),
-                        "name" => "Witcher 3",
-                        "price" => 49.99,
-                        "created_at" => 'exists',
-                        "updated_at" => 'exists',
+                    'id' => 'exists',
+                    'count' => 10,
+                    'product' => [
+                        'id' => $product->getId(),
+                        'name' => 'Witcher 3',
+                        'price' => 49.99,
+                        'created_at' => 'exists',
+                        'updated_at' => 'exists',
                     ],
-                    "created_at" => 'exists',
-                    "updated_at" => 'exists',
+                    'created_at' => 'exists',
+                    'updated_at' => 'exists',
                 ]
             ],
             [
                 'status_code' => $response->getStatusCode(),
                 'content' => [
-                    "id" => $responseContent->id ? 'exists' : 'is missing',
-                    "count" => $responseContent->count,
-                    "product" => [
-                        "id" => $responseContent->product->id,
-                        "name" => $responseContent->product->name,
-                        "price" => $responseContent->product->price,
-                        "created_at" => $responseContent->product->created_at ? 'exists' : 'is missing',
-                        "updated_at" => $responseContent->product->updated_at ? 'exists' : 'is missing',
+                    'id' => $responseContent->id ? 'exists' : 'is missing',
+                    'count' => $responseContent->count,
+                    'product' => [
+                        'id' => $responseContent->product->id,
+                        'name' => $responseContent->product->name,
+                        'price' => $responseContent->product->price,
+                        'created_at' => $responseContent->product->created_at ? 'exists' : 'is missing',
+                        'updated_at' => $responseContent->product->updated_at ? 'exists' : 'is missing',
                     ],
-                    "created_at" => $responseContent->created_at ? 'exists' : 'is missing',
-                    "updated_at" => $responseContent->updated_at ? 'exists' : 'is missing',
+                    'created_at' => $responseContent->created_at ? 'exists' : 'is missing',
+                    'updated_at' => $responseContent->updated_at ? 'exists' : 'is missing',
                 ]
             ]
         );
     }
 
-    public function testAddToCartActionReturnsNotFound()
+    public function testAddToCartActionReturnsNotFound(): void
     {
         $this->productHelper->removeProduct(['id' => 2077]);
 
@@ -222,7 +222,7 @@ class CartItemControllerTest extends ApiTestCase
         $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
     }
 
-    public function testAddToCartActionReturnsBadRequest()
+    public function testAddToCartActionReturnsBadRequest(): void
     {
         $this->cartItemHelper->emptyCart();
         $this->cartItemHelper->addCartItem($this->productHelper->createProduct('Gwent', 0.0), 9);
@@ -237,7 +237,7 @@ class CartItemControllerTest extends ApiTestCase
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
 
-    public function testRemoveFromCartActionSucceedsForUniqueItem()
+    public function testRemoveFromCartActionSucceedsForUniqueItem(): void
     {
         $product = $this->productHelper->createProduct('Witcher 3', 49.99);
         $this->cartItemHelper->emptyCart();
@@ -262,7 +262,7 @@ class CartItemControllerTest extends ApiTestCase
         );
     }
 
-    public function testRemoveFromCartActionSucceedsForNonUniqueItem()
+    public function testRemoveFromCartActionSucceedsForNonUniqueItem(): void
     {
         $product = $this->productHelper->createProduct('Witcher 3', 49.99);
         $this->cartItemHelper->emptyCart();
@@ -287,7 +287,7 @@ class CartItemControllerTest extends ApiTestCase
         );
     }
 
-    public function testRemoveFromCartActionReturnsNotFound()
+    public function testRemoveFromCartActionReturnsNotFound(): void
     {
         $this->productHelper->removeProduct(['id' => 2077]);
 
@@ -298,7 +298,7 @@ class CartItemControllerTest extends ApiTestCase
         $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
     }
 
-    public function testRemoveFromCartActionReturnsBadRequest()
+    public function testRemoveFromCartActionReturnsBadRequest(): void
     {
         $this->cartItemHelper->emptyCart();
         $product = $this->productHelper->createProduct('MGSV:PP', 22.99);

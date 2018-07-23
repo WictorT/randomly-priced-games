@@ -52,9 +52,9 @@ class ExceptionListener
     {
         if ($exception instanceof NotFoundHttpException) {
             return 'Entity not found';
-        } else {
-            return $exception->getMessage();
         }
+
+        return $exception->getMessage();
     }
 
     /**
@@ -65,9 +65,9 @@ class ExceptionListener
     {
         if ($exception instanceof HttpExceptionInterface) {
             return $exception->getStatusCode();
-        } else {
-            return Response::HTTP_INTERNAL_SERVER_ERROR;
         }
+
+        return Response::HTTP_INTERNAL_SERVER_ERROR;
     }
 
     /**

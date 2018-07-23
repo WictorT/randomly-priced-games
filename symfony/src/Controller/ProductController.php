@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 
+use App\DTO\BaseDTO;
 use App\DTO\ProductDTO;
 use App\Entity\Product;
 use App\Handler\ProductHandler;
@@ -83,7 +84,7 @@ class ProductController extends FOSRestController
      * @Rest\Post(path="/products", name="app.products.create")
      * @ParamConverter("productDTO", converter="fos_rest.request_body")
      *
-     * @param ProductDTO $productDTO
+     * @param BaseDTO|ProductDTO $productDTO
      * @param ConstraintViolationListInterface $validationErrors
      *
      * @throws BadRequestHttpException
@@ -104,7 +105,7 @@ class ProductController extends FOSRestController
      * @ParamConverter("productDTO", converter="fos_rest.request_body")
      *
      * @param Product $product
-     * @param ProductDTO $productDTO
+     * @param BaseDTO|ProductDTO $productDTO
      * @param ConstraintViolationListInterface $validationErrors
      *
      * @throws BadRequestHttpException

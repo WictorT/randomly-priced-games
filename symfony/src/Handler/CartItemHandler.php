@@ -224,6 +224,8 @@ class CartItemHandler extends BaseHandler
      * @param Product $product
      * @param User $user
      *
+     * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
+     *
      * @return CartItem|null
      */
     private function createNewCartItem(Product $product, User $user): ?CartItem

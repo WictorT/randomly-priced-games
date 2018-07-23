@@ -23,13 +23,13 @@ class ProductControllerTest extends ApiTestCase
         $this->productHelper->createProduct();
     }
 
-    public function testIndexActionSucceeds()
+    public function testIndexActionSucceeds(): void
     {
         $response = $this->performRequest('GET', 'app.products.list', [], [], false);
         $responseContent = json_decode($response->getContent());
 
         $products = $this->entityManager->getRepository(Product::class)->findAll();
-        $productsCount = count($products);
+        $productsCount = \count($products);
         $pagesCount = (int)($productsCount / ProductHelper::DEFAULT_PER_PAGE) +
             (bool)($productsCount % ProductHelper::DEFAULT_PER_PAGE);
         $pageCount = min(ProductHelper::DEFAULT_PER_PAGE, $productsCount);
@@ -66,13 +66,13 @@ class ProductControllerTest extends ApiTestCase
                         'last' => $responseContent->links->last,
                         'next' => $responseContent->links->next,
                     ],
-                    'data_count' => count($responseContent->data),
+                    'data_count' => \count($responseContent->data),
                 ]
             ]
         );
     }
 
-    public function testGetActionSuccess()
+    public function testGetActionSuccess(): void
     {
         $product = $this->productHelper->createProduct();
 
@@ -103,7 +103,7 @@ class ProductControllerTest extends ApiTestCase
         );
     }
 
-    public function testGetActionReturnsNotFound()
+    public function testGetActionReturnsNotFound(): void
     {
         $this->productHelper->removeProduct(['id' => 2077]);
 
@@ -112,7 +112,7 @@ class ProductControllerTest extends ApiTestCase
         $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
     }
 
-    public function testCreateActionSucceeds()
+    public function testCreateActionSucceeds(): void
     {
         $this->productHelper->removeProduct();
 
@@ -157,9 +157,8 @@ class ProductControllerTest extends ApiTestCase
     /**
      * @dataProvider dataTestCreateActionReturnsBadRequest
      * @param array $data
-     * @param null|\Closure $setup
      */
-    public function testCreateActionReturnsBadRequest(array $data, $setup = null)
+    public function testCreateActionReturnsBadRequest(array $data): void
     {
         $response = $this->performRequest('POST', 'app.products.create', [], $data);
 
@@ -212,14 +211,14 @@ class ProductControllerTest extends ApiTestCase
         ];
     }
 
-    public function testCreateActionReturnsUnauthorized()
+    public function testCreateActionReturnsUnauthorized(): void
     {
         $response = $this->performRequest('POST', 'app.products.create', [], [], false);
 
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
-    public function testUpdateActionSucceeds()
+    public function testUpdateActionSucceeds(): void
     {
         $this->productHelper->removeProduct(['name' => 'faulty string']);
         $this->productHelper->removeProduct();
@@ -263,7 +262,7 @@ class ProductControllerTest extends ApiTestCase
         );
     }
 
-    public function testUpdateActionReturnsNotFound()
+    public function testUpdateActionReturnsNotFound(): void
     {
         $this->productHelper->removeProduct(['id' => 2077]);
 
@@ -286,7 +285,7 @@ class ProductControllerTest extends ApiTestCase
      * @dataProvider dataTestUpdateActionReturnsBadRequest
      * @param array $data
      */
-    public function testUpdateActionReturnsBadRequest(array $data)
+    public function testUpdateActionReturnsBadRequest(array $data): void
     {
         $product = $this->productHelper->createProduct('faulty name', '99999');
 
@@ -335,14 +334,14 @@ class ProductControllerTest extends ApiTestCase
         ];
     }
 
-    public function testUpdateActionReturnsUnauthorized()
+    public function testUpdateActionReturnsUnauthorized(): void
     {
         $response = $this->performRequest('PUT', 'app.products.update', ['id' => 2077], [], false);
 
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
-    public function testDeleteActionSucceeds()
+    public function testDeleteActionSucceeds(): void
     {
         $product = $this->productHelper->createProduct();
 
@@ -360,7 +359,7 @@ class ProductControllerTest extends ApiTestCase
         );
     }
 
-    public function testDeleteActionReturnsNotFound()
+    public function testDeleteActionReturnsNotFound(): void
     {
         $this->productHelper->removeProduct(['id' => 2077]);
 
@@ -369,7 +368,7 @@ class ProductControllerTest extends ApiTestCase
         $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
     }
 
-    public function testDeleteActionReturnsUnauthorized()
+    public function testDeleteActionReturnsUnauthorized(): void
     {
         $response = $this->performRequest('DELETE', 'app.products.delete', ['id' => 2077], [], false);
 

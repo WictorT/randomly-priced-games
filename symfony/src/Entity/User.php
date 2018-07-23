@@ -16,7 +16,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class User extends BaseEntity implements UserInterface
 {
-    const TOTAL_CART_PRICE_KEY_PREFIX = 'total_cart_price_for_user_';
+    public const TOTAL_CART_PRICE_KEY_PREFIX = 'total_cart_price_for_user_';
 
     /**
      * @ORM\Column(type="integer")
@@ -84,7 +84,7 @@ class User extends BaseEntity implements UserInterface
     /**
      * @return string
      */
-    public function getUsername()
+    public function getUsername(): string
     {
         return $this->username;
     }
@@ -159,7 +159,7 @@ class User extends BaseEntity implements UserInterface
      *
      * @return User
      */
-    public function setCartItems($cartItems)
+    public function setCartItems($cartItems): User
     {
         $this->cartItems = $cartItems;
         return $this;
@@ -184,12 +184,12 @@ class User extends BaseEntity implements UserInterface
     /**
      * @return array
      */
-    public function getRoles()
+    public function getRoles(): array
     {
         return ['ROLE_USER'];
     }
 
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
     }
 

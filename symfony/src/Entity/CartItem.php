@@ -10,8 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class CartItem extends BaseEntity
 {
-    const MAX_ITEMS = 3;
-    const MAX_PRODUCTS_PER_ITEM = 10;
+    public const MAX_ITEMS = 3;
+    public const MAX_PRODUCTS_PER_ITEM = 10;
 
     /**
      * @ORM\Column(type="integer")

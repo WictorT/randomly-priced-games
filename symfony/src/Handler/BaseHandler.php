@@ -15,8 +15,9 @@ abstract class BaseHandler
 
     /**
      * @param ConstraintViolationListInterface $validationErrors
+     * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      */
-    public function handleValidationErrors(ConstraintViolationListInterface $validationErrors)
+    public function handleValidationErrors(ConstraintViolationListInterface $validationErrors): void
     {
         if ($validationErrors->count() > 0) {
             $errorMessage = '';
