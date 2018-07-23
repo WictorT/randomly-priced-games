@@ -4,6 +4,9 @@ namespace App\DTO;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * @Serializer\AccessorOrder("custom", custom = {"id", "name", "price", "created_at", "updated_at"})
+ */
 class ProductDTO extends BaseDTO
 {
     /**
