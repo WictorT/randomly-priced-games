@@ -77,11 +77,8 @@ class ExceptionListener
     private function getResponseJson(\Exception $exception): string
     {
         $message = [
-            'message' => 'Oops... an expected feature occurred',
-            'error' => [
-                'code' => $this->getResponseCode($exception),
-                'message' => $this->getErrorMessage($exception),
-            ]
+            'code' => $this->getResponseCode($exception),
+            'message' => $this->getErrorMessage($exception),
         ];
 
         return $this->serializer->serialize($message, 'json', array_merge(array(
