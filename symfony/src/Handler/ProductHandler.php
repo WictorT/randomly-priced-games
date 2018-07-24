@@ -141,6 +141,7 @@ class ProductHandler extends BaseHandler
 
         $this->entityManager->persist($product);
         $this->entityManager->flush();
+        $this->entityManager->refresh($product);
 
         return $this->transformer->transform($product);
     }
@@ -160,6 +161,7 @@ class ProductHandler extends BaseHandler
 
         $this->entityManager->merge($product);
         $this->entityManager->flush();
+        $this->entityManager->refresh($product);
 
         return $this->transformer->transform($product);
     }
