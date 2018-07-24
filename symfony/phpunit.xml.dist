@@ -39,6 +39,12 @@
     <filter>
         <whitelist>
             <directory>./src/</directory>
+            <exclude>
+                <directory suffix=".php">./src/Migrations</directory>
+                <directory suffix=".php">./src/DataFixtures</directory>
+                <directory suffix=".php">./src/DTO</directory>
+                <file>./src/Kernel.php</file>
+            </exclude>
         </whitelist>
     </filter>
 
