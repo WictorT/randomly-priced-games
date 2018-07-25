@@ -5,10 +5,10 @@ use App\DTO\BaseDTO;
 use App\DTO\ProductDTO;
 use App\Entity\BaseEntity;
 use App\Entity\Product;
-use App\Repository\BaseRepository;
 use App\Repository\ProductRepository;
 use App\Transformer\ProductTransformer;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Exception\LessThan1CurrentPageException;
 use Pagerfanta\Exception\LessThan1MaxPerPageException;
@@ -99,7 +99,7 @@ class ProductHandler extends BaseHandler
      */
     public function getPaginated(int $page, int $perPage): array
     {
-        $queryBuilder = $this->getRepository()->getQueryBuilder();
+        $queryBuilder = $this->getRepository()->createQueryBuilder('p');
         $adapter = new DoctrineORMAdapter($queryBuilder);
 
         $paginator = new Pagerfanta($adapter);
@@ -180,7 +180,7 @@ class ProductHandler extends BaseHandler
     /**
      * @return ProductRepository
      */
-    public function getRepository(): BaseRepository
+    public function getRepository(): EntityRepository
     {
         return $this->entityManager->getRepository(Product::class);
     }

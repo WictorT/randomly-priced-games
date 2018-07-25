@@ -1,21 +1,11 @@
 <?php
 namespace App\Repository;
 
-use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
 
-class UserRepository extends BaseRepository implements UserLoaderInterface
+class UserRepository extends EntityRepository implements UserLoaderInterface
 {
-    /**
-     * @param string $alias
-     *
-     * @return QueryBuilder
-     */
-    public function getQueryBuilder(string $alias = 'u'): QueryBuilder
-    {
-        return $this->createQueryBuilder($alias);
-    }
-
     /**
      * @param string $username
      * @return mixed|null|\Symfony\Component\Security\Core\User\UserInterface
@@ -23,7 +13,7 @@ class UserRepository extends BaseRepository implements UserLoaderInterface
      */
     public function loadUserByUsername($username)
     {
-        return $this->getQueryBuilder()
+        return $this->createQueryBuilder('u')
             ->where('u.username = :username OR u.email = :email')
             ->setParameter('username', $username)
             ->setParameter('email', $username)

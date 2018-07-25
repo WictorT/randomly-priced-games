@@ -1,17 +1,8 @@
 <?php
 namespace App\Repository;
 
-use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\EntityRepository;
 
-class CartItemRepository extends BaseRepository
+class CartItemRepository extends EntityRepository
 {
-    /**
-     * @param string $alias
-     *
-     * @return QueryBuilder
-     */
-    public function getQueryBuilder(string $alias = 'ci'): QueryBuilder
-    {
-        return $this->createQueryBuilder($alias);
-    }
 }

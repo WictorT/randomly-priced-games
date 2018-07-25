@@ -2,16 +2,16 @@
 
 namespace App\Handler;
 
-use App\Repository\BaseRepository;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 abstract class BaseHandler
 {
     /**
-     * @return BaseRepository
+     * @return EntityRepository
      */
-    abstract public function getRepository(): BaseRepository;
+    abstract public function getRepository(): EntityRepository;
 
     /**
      * @param ConstraintViolationListInterface $validationErrors

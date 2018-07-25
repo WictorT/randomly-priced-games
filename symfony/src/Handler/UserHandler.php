@@ -4,10 +4,10 @@ namespace App\Handler;
 use App\DTO\BaseDTO;
 use App\DTO\UserDTO;
 use App\Entity\User;
-use App\Repository\BaseRepository;
 use App\Repository\UserRepository;
 use App\Transformer\UserTransformer;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserHandler extends BaseHandler
@@ -62,7 +62,7 @@ class UserHandler extends BaseHandler
     /**
      * @return UserRepository
      */
-    public function getRepository(): BaseRepository
+    public function getRepository(): EntityRepository
     {
         return $this->entityManager->getRepository(User::class);
     }

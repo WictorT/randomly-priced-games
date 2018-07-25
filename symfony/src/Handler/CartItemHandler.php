@@ -7,10 +7,10 @@ use App\Entity\BaseEntity;
 use App\Entity\CartItem;
 use App\Entity\Product;
 use App\Entity\User;
-use App\Repository\BaseRepository;
 use App\Repository\CartItemRepository;
 use App\Transformer\CartItemTransformer;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Predis\Client;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -132,7 +132,7 @@ class CartItemHandler extends BaseHandler
     /**
      * @return CartItemRepository
      */
-    public function getRepository(): BaseRepository
+    public function getRepository(): EntityRepository
     {
         return $this->entityManager->getRepository(CartItem::class);
     }
