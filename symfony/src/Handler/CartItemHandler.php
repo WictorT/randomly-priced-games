@@ -1,9 +1,7 @@
 <?php
 namespace App\Handler;
 
-use App\DTO\BaseDTO;
 use App\DTO\CartItemDTO;
-use App\Entity\BaseEntity;
 use App\Entity\CartItem;
 use App\Entity\Product;
 use App\Entity\User;
@@ -55,16 +53,6 @@ class CartItemHandler extends BaseHandler
     }
 
     /**
-     * @param BaseEntity|CartItem $cartItem
-     *
-     * @return BaseDTO|CartItemDTO
-     */
-    public function getDto(BaseEntity $cartItem): BaseDTO
-    {
-        return $this->transformer->transform($cartItem);
-    }
-
-    /**
      * @param User $user
      *
      * @return array
@@ -103,7 +91,7 @@ class CartItemHandler extends BaseHandler
         $this->entityManager->flush();
         $this->cache->del([$this->getTotalPriceCacheKeyForUser($user)]);
 
-        return $this->getDto($cartItem);
+        return $this->transformer->transform($cartItem);
     }
 
     /**
