@@ -180,7 +180,7 @@ class ProductHandler extends BaseHandler
     /**
      * @return ProductRepository
      */
-    public function getRepository(): EntityRepository
+    private function getRepository(): EntityRepository
     {
         return $this->entityManager->getRepository(Product::class);
     }

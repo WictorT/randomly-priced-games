@@ -5,10 +5,8 @@ use App\DTO\CartItemDTO;
 use App\Entity\CartItem;
 use App\Entity\Product;
 use App\Entity\User;
-use App\Repository\CartItemRepository;
 use App\Transformer\CartItemTransformer;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Predis\Client;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -115,14 +113,6 @@ class CartItemHandler extends BaseHandler
 
         $this->entityManager->flush();
         $this->cache->del([$this->getTotalPriceCacheKeyForUser($user)]);
-    }
-
-    /**
-     * @return CartItemRepository
-     */
-    public function getRepository(): EntityRepository
-    {
-        return $this->entityManager->getRepository(CartItem::class);
     }
 
     /**
