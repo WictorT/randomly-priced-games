@@ -20,7 +20,7 @@ class CartItem extends BaseEntity
     private $count;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Product")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Product", inversedBy="cartItems")
      *
      * @var Product
      */

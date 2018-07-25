@@ -26,6 +26,11 @@ class Product extends BaseEntity
     private $price;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\CartItem", cascade={"remove"}, mappedBy="product")
+     */
+    private $cartItems;
+
+    /**
      * @return string
      */
     public function getName(): string
