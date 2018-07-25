@@ -25,31 +25,35 @@ class ProductControllerTest extends ApiTestCase
 
     public function testIndexActionSucceeds(): void
     {
-        $response = $this->performRequest('GET', 'app.products.list', [], [], false);
-        $responseContent = json_decode($response->getContent());
+        $this->productHelper->removeAllProducts();
+        $this->productHelper->createProduct("The Witcher 3: Wild Hunt");
+        $this->productHelper->createProduct("The Witcher 2: Assassins of Kings");
+        $this->productHelper->createProduct("The Witcher");
+        $this->productHelper->createProduct("Witcher Arena");
+        $this->productHelper->createProduct("Gwent: The Witcher Card Game");
+        $this->productHelper->createProduct("The Witcher: Battle Arena");
+        $this->productHelper->createProduct("The Witcher: Rise of the White Wolf");
 
-        $products = $this->entityManager->getRepository(Product::class)->findAll();
-        $productsCount = \count($products);
-        $pagesCount = (int)($productsCount / ProductHelper::DEFAULT_PER_PAGE) +
-            (bool)($productsCount % ProductHelper::DEFAULT_PER_PAGE);
-        $pageCount = min(ProductHelper::DEFAULT_PER_PAGE, $productsCount);
+        $response = $this->performRequest('GET', 'app.products.list', ['page' => 2], [], false);
+        $responseContent = json_decode($response->getContent());
 
         $this->assertEquals(
             [
                 'status_code' => Response::HTTP_OK,
                 'content' => [
-                    'page' => ProductHelper::DEFAULT_PAGE,
+                    'page' => 2,
                     'per_page' => ProductHelper::DEFAULT_PER_PAGE,
-                    'page_count' => $pageCount,
-                    'total_pages' => $pagesCount,
-                    'total_count' => $productsCount,
+                    'page_count' => 3,
+                    'total_pages' => 3,
+                    'total_count' => 7,
                     'links' => [
-                        'self' => $this->router->generate('app.products.list', ['page' => 1, 'per_page' => 3]),
+                        'self' => $this->router->generate('app.products.list', ['page' => 2, 'per_page' => 3]),
                         'first' => $this->router->generate('app.products.list', ['page' => 1, 'per_page' => 3]),
-                        'last' => $this->router->generate('app.products.list', ['page' => $pagesCount, 'per_page' => 3]),
-                        'next' => $this->router->generate('app.products.list', ['page' => 2, 'per_page' => 3]),
+                        'last' => $this->router->generate('app.products.list', ['page' => 3, 'per_page' => 3]),
+                        'next' => $this->router->generate('app.products.list', ['page' => 3, 'per_page' => 3]),
+                        'previous' => $this->router->generate('app.products.list', ['page' => 1, 'per_page' => 3]),
                     ],
-                    'data_count' => $pageCount,
+                    'data_count' => 3,
                 ]
             ],
             [
@@ -65,6 +69,7 @@ class ProductControllerTest extends ApiTestCase
                         'first' => $responseContent->links->first,
                         'last' => $responseContent->links->last,
                         'next' => $responseContent->links->next,
+                        'previous' => $responseContent->links->previous,
                     ],
                     'data_count' => \count($responseContent->data),
                 ]

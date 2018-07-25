@@ -52,10 +52,21 @@ class ProductHelper
      * @param array $findParams
      * @return void
      */
-    public function removeProduct(array $findParams = ['name' => self::TEST_PRODUCT_NAME])
+    public function removeProduct(array $findParams = ['name' => self::TEST_PRODUCT_NAME]): void
     {
         $product = $this->entityManager->getRepository(Product::class)->findOneBy($findParams);
         $product && $this->entityManager->remove($product);
+
+        $this->entityManager->flush();
+    }
+
+    public function removeAllProducts(): void
+    {
+        $products = $this->entityManager->getRepository(Product::class)->findAll();
+
+        foreach ($products as $product) {
+            $product && $this->entityManager->remove($product);
+        }
 
         $this->entityManager->flush();
     }
