@@ -19,8 +19,6 @@ class ProductControllerTest extends ApiTestCase
         parent::setUp();
 
         $this->productHelper = new ProductHelper($this->entityManager);
-
-        $this->productHelper->createProduct();
     }
 
     public function testIndexActionSucceeds(): void
@@ -75,6 +73,46 @@ class ProductControllerTest extends ApiTestCase
                 ]
             ]
         );
+    }
+
+    /**
+     * @dataProvider dataTestIndexActionFails
+     * @param array $data
+     */
+    public function testIndexActionFails($data): void
+    {
+        $response = $this->performRequest('GET', 'app.products.list', $data, [], false);
+
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+    }
+
+    /**
+     * @return array
+     */
+    public function dataTestIndexActionFails() : array
+    {
+        return [
+            'case 1: page less than 1' => [
+                'data' => [
+                    'page' => 0,
+                ]
+            ],
+            'case 2: page not integer' => [
+                'data' => [
+                    'page' => 'string',
+                ]
+            ],
+            'case 3: per_page less than 1' => [
+                'data' => [
+                    'per_page' => -2,
+                ]
+            ],
+            'case 4: per_page not integer' => [
+                'data' => [
+                    'per_page' => 'string',
+                ]
+            ],
+        ];
     }
 
     public function testGetActionSuccess(): void
