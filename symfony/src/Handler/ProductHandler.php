@@ -10,10 +10,6 @@ use App\Transformer\ProductTransformer;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
-use Pagerfanta\Exception\LessThan1CurrentPageException;
-use Pagerfanta\Exception\LessThan1MaxPerPageException;
-use Pagerfanta\Exception\NotIntegerCurrentPageException;
-use Pagerfanta\Exception\NotIntegerMaxPerPageException;
 use Pagerfanta\Exception\OutOfRangeCurrentPageException;
 use Pagerfanta\Pagerfanta;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -103,14 +99,10 @@ class ProductHandler extends BaseHandler
         $adapter = new DoctrineORMAdapter($queryBuilder);
 
         $paginator = new Pagerfanta($adapter);
-        try {
-            $paginator->setMaxPerPage($perPage);
-        } catch (LessThan1MaxPerPageException|NotIntegerMaxPerPageException $e) {
-            throw new BadRequestHttpException($e->getMessage());
-        }
+        $paginator->setMaxPerPage($perPage);
         try {
             $paginator->setCurrentPage($page);
-        } catch (OutOfRangeCurrentPageException|LessThan1CurrentPageException|NotIntegerCurrentPageException $e) {
+        } catch (OutOfRangeCurrentPageException $e) {
             throw new BadRequestHttpException($e->getMessage());
         }
 

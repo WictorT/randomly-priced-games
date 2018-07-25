@@ -112,6 +112,11 @@ class ProductControllerTest extends ApiTestCase
                     'per_page' => 'string',
                 ]
             ],
+            'case 5: page is out of range' => [
+                'data' => [
+                    'page' => 123456789,
+                ]
+            ],
         ];
     }
 
