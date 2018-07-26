@@ -46,5 +46,8 @@ docker-compose exec php ./bin/phpunit --coverage-html coverage
 ```
 this will create some coverage files, to see the report open: [coverage/index.xml](coverage/index.xml),
 
+### Documentation
+You can view the full API documentation here: [here](https://documenter.getpostman.com/view/273833/RWMHKmx1)
+
 <h2 align="center"> Thank you! </h2>
 <h3> Provided by Victor Timoftii </h3>
