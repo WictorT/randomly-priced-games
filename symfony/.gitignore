@@ -10,6 +10,7 @@
 .phpunit
 /phpunit.xml
 /coverage/
+coverage.zip
 ###< symfony/phpunit-bridge ###
 
 ###> lexik/jwt-authentication-bundle ###

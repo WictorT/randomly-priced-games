@@ -31,3 +31,13 @@ services:
         volumes:
             - ../data/redis:/data
         restart: always
+
+#TODO: adjust permissions
+    node:
+        image: node:8.15.0
+        ports:
+            - 5000:3000
+        volumes:
+            - ./node:/var/www/node
+        working_dir: /var/www/node
+        command: yarn start
