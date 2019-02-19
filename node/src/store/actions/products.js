@@ -7,8 +7,6 @@ export function fetchProducts() {
         const response = await axios.get(`${host}api/products`)
         const products = response.data.data
 
-        console.log(process.env)
-
         dispatch(fetchProductsSuccess(products))
     }
 }
