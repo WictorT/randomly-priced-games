@@ -40,4 +40,4 @@ services:
         volumes:
             - ./node:/var/www/node
         working_dir: /var/www/node
-        command: yarn start
+        command: bash -c "yarn && yarn start"
