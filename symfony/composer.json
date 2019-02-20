@@ -10,6 +10,7 @@
         "friendsofsymfony/rest-bundle": "^2.3",
         "jms/serializer-bundle": "^2.4",
         "lexik/jwt-authentication-bundle": "^2.5",
+        "nelmio/cors-bundle": "^1.5",
         "pagerfanta/pagerfanta": "^2.0",
         "predis/predis": "^1.1",
         "sensio/framework-extra-bundle": "^5.2",
