@@ -1,18 +1,27 @@
 import React, {Component} from 'react'
-import Header from "./componets/Header/Header";
-import Lists from "./componets/Lists/Lists";
+import {Route, Switch, withRouter} from 'react-router-dom'
+
+import Layout from "./shared/hoc/Layout"
+import HomePage from "./app/HomePage/HomePage"
+import ProductDetails from "./app/ProductDetails/ProductDetails"
 
 class App extends Component {
 
     render() {
 
-        return (
-            <React.Fragment>
-                <Header />
-                <Lists />
-            </React.Fragment>
+        let routes = (
+            <Switch>
+                <Route path="/" exact component={HomePage} ></Route>
+                <Route path="/:id" exact component={ProductDetails} ></Route>
+            </Switch>
+        )
+
+        return(
+            <Layout>
+                { routes }
+            </Layout>
         )
     }
 }
 
-export default App;
+export default withRouter(App)

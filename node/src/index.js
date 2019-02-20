@@ -7,7 +7,7 @@ import {BrowserRouter} from 'react-router-dom'
 
 import App from './App';
 import './styles.css'
-import rootReducer from "./store/reducers/rootReducer";
+import rootReducer from "./shared/store/reducers/rootReducer"
 
 const composeEnhancers =
     typeof window === 'object' &&
