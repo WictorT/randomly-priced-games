@@ -46,7 +46,12 @@ class HomePage extends Component {
     }
 
     render() {
-        const { classes, products, history, loading } = this.props
+        const { classes, products, history } = this.props
+        let loading = false
+
+        if ( ! products ) {
+            loading = true
+        }
 
         return (
             <React.Fragment>
@@ -92,7 +97,6 @@ class HomePage extends Component {
 function mapStateToProps(state) {
     return {
         products: state.products.products,
-        loading: state.products.loading
     }
 }
 
