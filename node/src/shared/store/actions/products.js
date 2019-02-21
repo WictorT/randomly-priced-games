@@ -3,7 +3,7 @@ import axios from 'axios'
 
 export function fetchProducts() {
     return async dispatch => {
-        const host = process.env.REACT_APP_HOST
+        const host = process.env.REACT_APP_API_PUBLIC_URL
         const response = await axios.get(`${host}/api/products`)
         const products = response.data.data
 
@@ -20,7 +20,7 @@ export function fetchProductsSuccess(products) {
 
 export function fetchProductById(productId) {
     return async dispatch => {
-        const host = process.env.REACT_APP_HOST
+        const host = process.env.REACT_APP_API_PUBLIC_URL
         const response = await axios.get(`${host}/api/products/${productId}`)
         const product = response.data
 

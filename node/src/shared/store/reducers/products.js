@@ -2,7 +2,6 @@ import {FETCH_PRODUCTS_SUCCESS, FETCH_PRODUCT_SUCCESS} from "../actions/actionsT
 
 const intialState = {
     products: [],
-    loading: false,
     product: null,
 }
 
@@ -11,13 +10,13 @@ export default function products(state = intialState, action) {
         case FETCH_PRODUCTS_SUCCESS: {
 
             return {
-                ...state, loading: false, products: action.products
+                ...state, products: action.products
             }
         }
 
         case FETCH_PRODUCT_SUCCESS:
             return {
-                ...state, loading: false, product: action.product
+                ...state, product: action.product
             }
 
         default: {
