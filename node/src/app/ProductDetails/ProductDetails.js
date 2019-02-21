@@ -1,5 +1,4 @@
 import React, {Component} from "react"
-
 import {withStyles} from "@material-ui/core/styles"
 import Card from "@material-ui/core/Card"
 import CardContent from "@material-ui/core/CardContent"
@@ -31,12 +30,12 @@ class ProductDetails extends Component {
     }
 
     render() {
-        const {classes, product, loading} = this.props
+        const {classes, loading} = this.props
 
         return (
             <React.Fragment>
             {
-                loading || !product
+                loading
                 ? <Loader/>
                 : <Card className={classes.card}>
 
