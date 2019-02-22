@@ -1,57 +1,108 @@
-import React, {Component} from 'react'
-import classNames from 'classnames';
-import {connect} from 'react-redux'
-import Button from '@material-ui/core/Button';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import { withStyles } from '@material-ui/core/styles';
+import React, {Component} from "react"
+import classNames from "classnames"
+import {connect} from "react-redux"
+import Button from "@material-ui/core/Button"
+import Card from "@material-ui/core/Card"
+import CardActions from "@material-ui/core/CardActions"
+import CardContent from "@material-ui/core/CardContent"
+import CardMedia from "@material-ui/core/CardMedia"
+import Grid from "@material-ui/core/Grid"
+import Typography from "@material-ui/core/Typography"
+import Link from '@material-ui/core/Link';
+import {withStyles} from "@material-ui/core/styles"
 import {fetchProducts} from "../../shared/store/actions/products"
 import Loader from "../../shared/componets/UI/Loader/Loader"
 
 const styles = theme => ({
     layout: {
-        width: 'auto',
+        width: "auto",
         marginLeft: theme.spacing.unit * 3,
         marginRight: theme.spacing.unit * 3,
         [theme.breakpoints.up(1100 + theme.spacing.unit * 3 * 2)]: {
             width: 1100,
-            marginLeft: 'auto',
-            marginRight: 'auto',
+            marginLeft: "auto",
+            marginRight: "auto",
         },
     },
     cardGrid: {
         padding: `${theme.spacing.unit * 8}px 0`,
     },
     card: {
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
     },
     cardMedia: {
-        paddingTop: '56.25%', // 16:9
+        paddingTop: "56.25%", // 16:9
     },
     cardContent: {
         flexGrow: 1,
     },
-});
+    link: {
+        marginRight: 10,
+        marginTop: 15,
+        padding: 10,
+        fontSize: 16,
+        color: 'black',
+        '&:hover': {
+            background: "#DADADA",
+            //color: "white",
+            textDecoration: "none"
+        }
+    },
+})
 
 class HomePage extends Component {
+
+    state = {
+        currentPage: 1,
+        productsPerPage: 3
+    }
 
     componentDidMount() {
         this.props.fetchProducts()
     }
 
+    handlePage = (event) => {
+        this.setState({
+            currentPage: Number(event.target.id)
+        });
+    }
+
     render() {
-        const { classes, products, history } = this.props
+        const {classes, products, history} = this.props
         let loading = false
 
-        if ( ! products ) {
+        if (!products) {
             loading = true
         }
+
+        const { currentPage, productsPerPage } = this.state;
+
+        // Logic for displaying current products
+        const indexOfLastProducts = currentPage * productsPerPage;
+        const indexOfFirstProduct = indexOfLastProducts - productsPerPage;
+        const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProducts);
+
+        // Logic for displaying page numbers
+        const pageNumbers = [];
+        for (let i = 1; i <= Math.ceil(products.length / productsPerPage); i++) {
+            pageNumbers.push(i);
+        }
+
+        const renderPageNumbers = pageNumbers.map(number => {
+            return (
+                <Link
+                    component="button"
+                    key={number}
+                    id={number}
+                    className={classes.link}
+                    onClick={this.handlePage}
+                >
+                    {number}
+                </Link>
+            );
+        });
 
         return (
             <React.Fragment>
@@ -61,7 +112,7 @@ class HomePage extends Component {
                             ? <Loader/>
                             : <div className={classNames(classes.layout, classes.cardGrid)}>
                                 <Grid container spacing={40}>
-                                    {products.map(product => (
+                                    {currentProducts.map(product => (
                                         <Grid item key={product.id} sm={6} md={4} lg={3}>
                                             <Card className={classes.card}>
                                                 <CardMedia
@@ -74,11 +125,13 @@ class HomePage extends Component {
                                                         {product.name}
                                                     </Typography>
                                                     <Typography>
-                                                        This is a media card. You can use this section to describe the content.
+                                                        This is a media card. You can use this section to describe the
+                                                        content.
                                                     </Typography>
                                                 </CardContent>
                                                 <CardActions>
-                                                    <Button size="small" color="primary" onClick={() => history.push('/' + product.id)}>
+                                                    <Button size="small" color="primary"
+                                                            onClick={() => history.push("/" + product.id)}>
                                                         View
                                                     </Button>
                                                 </CardActions>
@@ -86,11 +139,14 @@ class HomePage extends Component {
                                         </Grid>
                                     ))}
                                 </Grid>
+                                <div>
+                                    {renderPageNumbers}
+                                </div>
                             </div>
                     }
                 </main>
             </React.Fragment>
-        );
+        )
     }
 }
 
@@ -102,7 +158,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        fetchProducts: () => dispatch(fetchProducts())
+        fetchProducts: () => dispatch(fetchProducts()),
     }
 }
 

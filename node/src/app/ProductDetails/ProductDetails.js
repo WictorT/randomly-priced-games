@@ -8,7 +8,6 @@ import {fetchProductById} from "../../shared/store/actions/products"
 import {connect} from "react-redux"
 import Loader from "../../shared/componets/UI/Loader/Loader"
 
-
 const styles = {
     cardMedia: {
         paddingTop: "56.25%", // 16:9
