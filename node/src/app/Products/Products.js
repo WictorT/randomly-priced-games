@@ -97,15 +97,30 @@ const perPageOptions = [1, 3, 5]
 class Products extends Component {
 
     componentDidMount() {
-        this.props.fetchProducts()
+
+        let queryParams = {}
+
+        if (localStorage.hasOwnProperty("perPage")) {
+
+            const per_page = localStorage.getItem("perPage")
+
+            queryParams = {
+                params: {
+                    per_page: per_page,
+                    page: 1,
+                },
+            }
+        }
+
+        this.props.fetchProducts(queryParams)
     }
 
     handleChangePage = (event, per_page) => {
         const queryParams = {
             params: {
                 page: event.target.id,
-                per_page
-            }
+                per_page,
+            },
         }
 
         this.props.fetchProducts(queryParams)
@@ -115,8 +130,8 @@ class Products extends Component {
         const queryParams = {
             params: {
                 per_page: event.target.value,
-                page: 1
-            }
+                page: 1,
+            },
         }
 
         this.props.fetchProducts(queryParams)
@@ -129,7 +144,7 @@ class Products extends Component {
             history,
             loading,
             totalPages,
-            perPage
+            perPage,
         } = this.props
 
         return (
@@ -177,7 +192,9 @@ class Products extends Component {
                                                 component="button"
                                                 key={pageNumber}
                                                 id={pageNumber}
-                                                onClick={(event) => {this.handleChangePage(event, perPage)}}
+                                                onClick={(event) => {
+                                                    this.handleChangePage(event, perPage)
+                                                }}
                                                 className={classes.link}
                                             >
                                                 {pageNumber}
@@ -218,13 +235,13 @@ function mapStateToProps(state) {
         products: state.products.products,
         loading: state.products.productsLoader,
         perPage: state.products.perPage,
-        totalPages: state.products.totalPages
+        totalPages: state.products.totalPages,
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        fetchProducts: (perPage, page) => dispatch(fetchProducts(perPage, page))
+        fetchProducts: (perPage, page) => dispatch(fetchProducts(perPage, page)),
     }
 }
 

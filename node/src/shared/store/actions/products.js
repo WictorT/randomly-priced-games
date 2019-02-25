@@ -7,6 +7,8 @@ export function fetchProducts(queryParams = null) {
         const response = await axios.get(`${host}/api/products`, queryParams)
         const products = response.data
 
+        updatePerPage(queryParams)
+
         dispatch(fetchProductsSuccess(products))
     }
 }
@@ -14,7 +16,7 @@ export function fetchProducts(queryParams = null) {
 export function fetchProductsSuccess(products) {
     return {
         type: FETCH_PRODUCTS_SUCCESS,
-        products,
+        products
     }
 }
 
@@ -31,6 +33,14 @@ export function fetchProductById(productId) {
 export function fetchProductSuccess(product) {
     return {
         type: FETCH_PRODUCT_SUCCESS,
-        product,
+        product
+    }
+}
+
+export function updatePerPage(queryParams) {
+
+    if (queryParams !== null) {
+        const { params } = queryParams
+        localStorage.setItem('perPage', params.per_page)
     }
 }
