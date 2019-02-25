@@ -1,6 +1,8 @@
 import React, {Component} from "react"
-import classNames from "classnames"
 import {connect} from "react-redux"
+import classNames from "classnames"
+import {fetchProducts} from "../../shared/store/actions/products"
+import Loader from "../../shared/componets/UI/Loader/Loader"
 import Button from "@material-ui/core/Button"
 import Card from "@material-ui/core/Card"
 import CardActions from "@material-ui/core/CardActions"
@@ -8,10 +10,48 @@ import CardContent from "@material-ui/core/CardContent"
 import CardMedia from "@material-ui/core/CardMedia"
 import Grid from "@material-ui/core/Grid"
 import Typography from "@material-ui/core/Typography"
-import Link from '@material-ui/core/Link';
+import Link from "@material-ui/core/Link"
 import {withStyles} from "@material-ui/core/styles"
-import {fetchProducts} from "../../shared/store/actions/products"
-import Loader from "../../shared/componets/UI/Loader/Loader"
+import InputBase from "@material-ui/core/InputBase"
+import Select from "@material-ui/core/Select"
+import MenuItem from "@material-ui/core/MenuItem"
+import InputLabel from "@material-ui/core/InputLabel"
+
+const BootstrapInput = withStyles(theme => ({
+    root: {
+        "label + &": {
+            marginTop: theme.spacing.unit * 3,
+        },
+    },
+    input: {
+        borderRadius: 4,
+        position: "relative",
+        backgroundColor: theme.palette.background.paper,
+        border: "1px solid #ced4da",
+        fontSize: 16,
+        width: "auto",
+        padding: "10px 26px 10px 12px",
+        transition: theme.transitions.create(["border-color", "box-shadow"]),
+        // Use the system font instead of the default Roboto font.
+        fontFamily: [
+            "-apple-system",
+            "BlinkMacSystemFont",
+            "\"Segoe UI\"",
+            "Roboto",
+            "\"Helvetica Neue\"",
+            "Arial",
+            "sans-serif",
+            "\"Apple Color Emoji\"",
+            "\"Segoe UI Emoji\"",
+            "\"Segoe UI Symbol\"",
+        ].join(","),
+        "&:focus": {
+            borderRadius: 4,
+            borderColor: "#80bdff",
+            boxShadow: "0 0 0 0.2rem rgba(0,123,255,.25)",
+        },
+    },
+}))(InputBase)
 
 const styles = theme => ({
     layout: {
@@ -40,54 +80,45 @@ const styles = theme => ({
     },
     link: {
         marginRight: 10,
-        marginTop: 15,
         padding: 10,
         fontSize: 16,
-        color: 'black',
-        '&:hover': {
+        color: "black",
+        "&:hover": {
             background: "#DADADA",
             //color: "white",
-            textDecoration: "none"
-        }
+            textDecoration: "none",
+        },
     },
 })
 
 class HomePage extends Component {
 
-    state = {
-        currentPage: 1,
-        productsPerPage: 3
-    }
-
     componentDidMount() {
         this.props.fetchProducts()
     }
 
-    handlePage = (event) => {
-        this.setState({
-            currentPage: Number(event.target.id)
-        });
+    handlePage = (event, perPage) => {
+        this.props.fetchProducts(perPage, event.target.id)
+    }
+
+    handleChange = event => {
+        this.props.fetchProducts(event.target.value)
     }
 
     render() {
-        const {classes, products, history} = this.props
-        let loading = false
+        const {
+            classes,
+            products,
+            history,
+            loader,
+            totalPages,
+            perPage
+        } = this.props
 
-        if (!products) {
-            loading = true
-        }
+        const pageNumbers = []
 
-        const { currentPage, productsPerPage } = this.state;
-
-        // Logic for displaying current products
-        const indexOfLastProducts = currentPage * productsPerPage;
-        const indexOfFirstProduct = indexOfLastProducts - productsPerPage;
-        const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProducts);
-
-        // Logic for displaying page numbers
-        const pageNumbers = [];
-        for (let i = 1; i <= Math.ceil(products.length / productsPerPage); i++) {
-            pageNumbers.push(i);
+        for (let i = 1; i <= totalPages; i++) {
+            pageNumbers.push(i)
         }
 
         const renderPageNumbers = pageNumbers.map(number => {
@@ -96,28 +127,28 @@ class HomePage extends Component {
                     component="button"
                     key={number}
                     id={number}
+                    onClick={(e) => {this.handlePage(e, perPage)}}
                     className={classes.link}
-                    onClick={this.handlePage}
                 >
                     {number}
                 </Link>
-            );
-        });
+            )
+        })
 
         return (
             <React.Fragment>
                 <main>
                     {
-                        loading
+                        loader
                             ? <Loader/>
                             : <div className={classNames(classes.layout, classes.cardGrid)}>
                                 <Grid container spacing={40}>
-                                    {currentProducts.map(product => (
-                                        <Grid item key={product.id} sm={6} md={4} lg={3}>
+                                    {products.map(product => (
+                                        <Grid item key={product.id} sm={6} md={4} lg={4}>
                                             <Card className={classes.card}>
                                                 <CardMedia
                                                     className={classes.cardMedia}
-                                                    image="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22288%22%20height%3D%22225%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20288%20225%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_164edaf95ee%20text%20%7B%20fill%3A%23eceeef%3Bfont-weight%3Abold%3Bfont-family%3AArial%2C%20Helvetica%2C%20Open%20Sans%2C%20sans-serif%2C%20monospace%3Bfont-size%3A14pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_164edaf95ee%22%3E%3Crect%20width%3D%22288%22%20height%3D%22225%22%20fill%3D%22%2355595c%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%2296.32500076293945%22%20y%3D%22118.8%22%3EThumbnail%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" // eslint-disable-line max-len
+                                                    image="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22288%22%20height%3D%22225%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20288%20225%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_164edaf95ee%20text%20%7B%20fill%3A%23eceeef%3Bfont-weight%3Abold%3Bfont-family%3AArial%2C%20Helvetica%2C%20Open%20Sans%2C%20sans-serif%2C%20monospace%3Bfont-size%3A14pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_164edaf95ee%22%3E%3Crect%20width%3D%22288%22%20height%3D%22225%22%20fill%3D%22%2355595c%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%2296.32500076293945%22%20y%3D%22118.8%22%3EThumbnail%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E"
                                                     title="Image title"
                                                 />
                                                 <CardContent className={classes.cardContent}>
@@ -130,8 +161,11 @@ class HomePage extends Component {
                                                     </Typography>
                                                 </CardContent>
                                                 <CardActions>
-                                                    <Button size="small" color="primary"
-                                                            onClick={() => history.push("/" + product.id)}>
+                                                    <Button
+                                                        size="small"
+                                                        color="primary"
+                                                        onClick={() => history.push("/" + product.id)}
+                                                    >
                                                         View
                                                     </Button>
                                                 </CardActions>
@@ -139,9 +173,17 @@ class HomePage extends Component {
                                         </Grid>
                                     ))}
                                 </Grid>
-                                <div>
-                                    {renderPageNumbers}
-                                </div>
+                                {renderPageNumbers}
+                                <InputLabel htmlFor="age-customized-select"></InputLabel>
+                                <Select
+                                    value={perPage}
+                                    onChange={this.handleChange}
+                                    input={<BootstrapInput name="age" id="age-customized-select"/>}
+                                >
+                                    <MenuItem value={1}>1</MenuItem>
+                                    <MenuItem value={3}>3</MenuItem>
+                                    <MenuItem value={5}>5</MenuItem>
+                                </Select>
                             </div>
                     }
                 </main>
@@ -153,12 +195,15 @@ class HomePage extends Component {
 function mapStateToProps(state) {
     return {
         products: state.products.products,
+        loader: state.products.productsLoader,
+        perPage: state.products.perPage,
+        totalPages: state.products.totalPages,
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        fetchProducts: () => dispatch(fetchProducts()),
+        fetchProducts: (perPage, page) => dispatch(fetchProducts(perPage, page))
     }
 }
 
