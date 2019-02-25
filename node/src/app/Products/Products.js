@@ -1,7 +1,7 @@
 import React, {Component} from "react"
 import {connect} from "react-redux"
 import classNames from "classnames"
-import _ from 'lodash'
+import _ from "lodash"
 import {fetchProducts} from "../../shared/store/actions/products"
 import Loader from "../../shared/componets/UI/Loader/Loader"
 import Button from "@material-ui/core/Button"
@@ -92,7 +92,7 @@ const styles = theme => ({
     },
 })
 
-const optionsChangePerPage = [1, 3, 5]
+const perPageOptions = [1, 3, 5]
 
 class Products extends Component {
 
@@ -171,16 +171,16 @@ class Products extends Component {
                                     ))}
                                 </Grid>
                                 {
-                                    _.range(1, totalPages + 1).map(number => {
+                                    _.range(1, totalPages + 1).map(pageNumber => {
                                         return (
                                             <Link
                                                 component="button"
-                                                key={number}
-                                                id={number}
+                                                key={pageNumber}
+                                                id={pageNumber}
                                                 onClick={(event) => {this.handleChangePage(event, perPage)}}
                                                 className={classes.link}
                                             >
-                                                {number}
+                                                {pageNumber}
                                             </Link>
                                         )
                                     })
@@ -192,7 +192,7 @@ class Products extends Component {
                                     input={<BootstrapInput name="age" id="age-customized-select"/>}
                                 >
                                     {
-                                        optionsChangePerPage.map(number => {
+                                        perPageOptions.map(number => {
                                             return (
                                                 <MenuItem
                                                     component="button"
