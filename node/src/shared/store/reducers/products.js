@@ -1,4 +1,4 @@
-import {FETCH_PRODUCTS_SUCCESS, FETCH_PRODUCT_SUCCESS, PRODUCTS_PAGINATION} from "../actions/actionsTypes"
+import {FETCH_PRODUCTS_SUCCESS, FETCH_PRODUCT_SUCCESS} from "../actions/actionsTypes"
 
 const intialState = {
     products: [],

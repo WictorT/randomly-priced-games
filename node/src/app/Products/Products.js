@@ -1,6 +1,7 @@
 import React, {Component} from "react"
 import {connect} from "react-redux"
 import classNames from "classnames"
+import _ from 'lodash'
 import {fetchProducts} from "../../shared/store/actions/products"
 import Loader from "../../shared/componets/UI/Loader/Loader"
 import Button from "@material-ui/core/Button"
@@ -91,18 +92,34 @@ const styles = theme => ({
     },
 })
 
-class HomePage extends Component {
+const optionsChangePerPage = [1, 3, 5]
+
+class Products extends Component {
 
     componentDidMount() {
         this.props.fetchProducts()
     }
 
-    handlePage = (event, perPage) => {
-        this.props.fetchProducts(perPage, event.target.id)
+    handleChangePage = (event, per_page) => {
+        const queryParams = {
+            params: {
+                page: event.target.id,
+                per_page
+            }
+        }
+
+        this.props.fetchProducts(queryParams)
     }
 
-    handleChange = event => {
-        this.props.fetchProducts(event.target.value)
+    handleChangePerPage = event => {
+        const queryParams = {
+            params: {
+                per_page: event.target.value,
+                page: 1
+            }
+        }
+
+        this.props.fetchProducts(queryParams)
     }
 
     render() {
@@ -110,36 +127,16 @@ class HomePage extends Component {
             classes,
             products,
             history,
-            loader,
+            loading,
             totalPages,
             perPage
         } = this.props
-
-        const pageNumbers = []
-
-        for (let i = 1; i <= totalPages; i++) {
-            pageNumbers.push(i)
-        }
-
-        const renderPageNumbers = pageNumbers.map(number => {
-            return (
-                <Link
-                    component="button"
-                    key={number}
-                    id={number}
-                    onClick={(e) => {this.handlePage(e, perPage)}}
-                    className={classes.link}
-                >
-                    {number}
-                </Link>
-            )
-        })
 
         return (
             <React.Fragment>
                 <main>
                     {
-                        loader
+                        loading
                             ? <Loader/>
                             : <div className={classNames(classes.layout, classes.cardGrid)}>
                                 <Grid container spacing={40}>
@@ -173,16 +170,40 @@ class HomePage extends Component {
                                         </Grid>
                                     ))}
                                 </Grid>
-                                {renderPageNumbers}
+                                {
+                                    _.range(1, totalPages + 1).map(number => {
+                                        return (
+                                            <Link
+                                                component="button"
+                                                key={number}
+                                                id={number}
+                                                onClick={(event) => {this.handleChangePage(event, perPage)}}
+                                                className={classes.link}
+                                            >
+                                                {number}
+                                            </Link>
+                                        )
+                                    })
+                                }
                                 <InputLabel htmlFor="age-customized-select"></InputLabel>
                                 <Select
                                     value={perPage}
-                                    onChange={this.handleChange}
+                                    onChange={event => this.handleChangePerPage(event)}
                                     input={<BootstrapInput name="age" id="age-customized-select"/>}
                                 >
-                                    <MenuItem value={1}>1</MenuItem>
-                                    <MenuItem value={3}>3</MenuItem>
-                                    <MenuItem value={5}>5</MenuItem>
+                                    {
+                                        optionsChangePerPage.map(number => {
+                                            return (
+                                                <MenuItem
+                                                    component="button"
+                                                    key={number}
+                                                    value={number}
+                                                >
+                                                    {number}
+                                                </MenuItem>
+                                            )
+                                        })
+                                    }
                                 </Select>
                             </div>
                     }
@@ -195,9 +216,9 @@ class HomePage extends Component {
 function mapStateToProps(state) {
     return {
         products: state.products.products,
-        loader: state.products.productsLoader,
+        loading: state.products.productsLoader,
         perPage: state.products.perPage,
-        totalPages: state.products.totalPages,
+        totalPages: state.products.totalPages
     }
 }
 
@@ -207,4 +228,4 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(HomePage))
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Products))
