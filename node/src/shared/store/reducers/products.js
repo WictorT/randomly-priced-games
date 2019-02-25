@@ -2,17 +2,21 @@ import {FETCH_PRODUCTS_SUCCESS, FETCH_PRODUCT_SUCCESS} from "../actions/actionsT
 
 const intialState = {
     products: [],
+    productsLoader: true,
     product: null,
+    perPageProducts: 0
 }
 
 export default function products(state = intialState, action) {
     switch (action.type) {
-        case FETCH_PRODUCTS_SUCCESS: {
-
+        case FETCH_PRODUCTS_SUCCESS:
             return {
-                ...state, products: action.products
+                ...state,
+                productsLoader: false,
+                products: action.products.data,
+                perPage: action.products.per_page,
+                totalPages: action.products.total_pages
             }
-        }
 
         case FETCH_PRODUCT_SUCCESS:
             return {

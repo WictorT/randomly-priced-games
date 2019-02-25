@@ -1,11 +1,11 @@
-import {FETCH_PRODUCTS_SUCCESS, FETCH_PRODUCT_SUCCESS} from "./actionsTypes"
-import axios from 'axios'
+import {FETCH_PRODUCT_SUCCESS, FETCH_PRODUCTS_SUCCESS} from "./actionsTypes"
+import axios from "axios"
 
-export function fetchProducts() {
+export function fetchProducts(queryParams = null) {
     return async dispatch => {
         const host = process.env.REACT_APP_API_PUBLIC_URL
-        const response = await axios.get(`${host}/api/products`)
-        const products = response.data.data
+        const response = await axios.get(`${host}/api/products`, queryParams)
+        const products = response.data
 
         dispatch(fetchProductsSuccess(products))
     }
@@ -14,7 +14,7 @@ export function fetchProducts() {
 export function fetchProductsSuccess(products) {
     return {
         type: FETCH_PRODUCTS_SUCCESS,
-        products
+        products,
     }
 }
 
@@ -31,6 +31,6 @@ export function fetchProductById(productId) {
 export function fetchProductSuccess(product) {
     return {
         type: FETCH_PRODUCT_SUCCESS,
-        product
+        product,
     }
 }
