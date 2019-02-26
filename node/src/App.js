@@ -3,6 +3,8 @@ import {Route, Switch, withRouter} from 'react-router-dom'
 import Layout from "./shared/hoc/Layout"
 import ProductDetails from "./app/ProductDetails/ProductDetails"
 import Products from "./app/Products/Products"
+import Login from "./app/Login/Login"
+import Register from "./app/Register/Register"
 
 class App extends Component {
 
@@ -11,8 +13,10 @@ class App extends Component {
         return(
             <Layout>
                 <Switch>
-                    <Route path="/" exact component={Products} ></Route>
-                    <Route path="/:id" component={ProductDetails} ></Route>
+                    <Route path="/login" exact component={Login} ></Route>
+                    <Route path="/register" exact component={Register} ></Route>
+                    <Route path="/products" exact component={Products} ></Route>
+                    <Route path="/products/:id" component={ProductDetails} ></Route>
                 </Switch>
             </Layout>
         )
